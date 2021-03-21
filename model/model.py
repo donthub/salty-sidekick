@@ -11,13 +11,13 @@ class Model:
         logs = []
         db_logs = self.database.get_logs()
         for db_log in db_logs:
-            log = Log(db_log[0], db_log[1], db_log[2], db_log[3], db_log[4], db_log[5], db_log[6], db_log[7])
+            log = Log(db_log[0], db_log[1], db_log[2], db_log[3], db_log[4], db_log[5], db_log[6], db_log[7], db_log[8])
             logs.append(log)
         return logs
 
-    def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner):
-        self.database.add_log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner)
-        self.logs.append(Log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner))
+    def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
+        self.database.add_log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode)
+        self.logs.append(Log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode))
 
     def get_stats(self, p1_name, p2_name, tier):
         stats = Stats(p1_name, p2_name, tier)

@@ -15,16 +15,16 @@ class Database:
         self.connect()
         self.setup_tables()
 
-    def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner):
+    def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
         self.cursor.execute("""
-            INSERT INTO logs (p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, datetime)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'));
-        """, [p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner])
+            INSERT INTO logs (p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode, datetime)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'));
+        """, [p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode])
         self.connection.commit()
 
     def get_logs(self):
         self.cursor.execute("""
-            SELECT p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner FROM logs ORDER BY id ASC;
+            SELECT p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode FROM logs ORDER BY id ASC;
         """)
         return self.cursor.fetchall()
 
@@ -51,6 +51,7 @@ class Database:
                     p2_streak INTEGER,
                     tier TEXT,
                     winner TEXT,
+                    mode TEXT,
                     datetime TEXT
                 );
             """)
