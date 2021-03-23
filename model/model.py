@@ -29,7 +29,7 @@ class Model:
                 continue
 
             self.calc_totals(stats, log, p1_name, p2_name)
-            self.calc_level1(stats, log, p1_name, p2_name)
+            self.calc_direct(stats, log, p1_name, p2_name)
             self.calc_streaks(stats, log, p1_name, p2_name)
         return stats
 
@@ -46,22 +46,22 @@ class Model:
             else:
                 stats.p2_total_losses = self.increment(stats.p2_total_losses)
 
-    def calc_level1(self, stats, log, p1_name, p2_name):
+    def calc_direct(self, stats, log, p1_name, p2_name):
         if log.p1_name == p1_name and log.p2_name == p2_name or log.p1_name == p2_name and log.p2_name == p1_name:
             if log.p1_name == p1_name:
-                stats.p1_level1_amount = self.get_amount(stats.p1_level1_amount, log.p1_amount)
-                stats.p2_level1_amount = self.get_amount(stats.p2_level1_amount, log.p2_amount)
+                stats.p1_direct_amount = self.get_amount(stats.p1_direct_amount, log.p1_amount)
+                stats.p2_direct_amount = self.get_amount(stats.p2_direct_amount, log.p2_amount)
                 if log.winner == p1_name:
-                    stats.p1_level1_wins = self.increment(stats.p1_level1_wins)
+                    stats.p1_direct_wins = self.increment(stats.p1_direct_wins)
                 else:
-                    stats.p2_level1_wins = self.increment(stats.p2_level1_wins)
+                    stats.p2_direct_wins = self.increment(stats.p2_direct_wins)
             else:
-                stats.p1_level1_amount = self.get_amount(stats.p1_level1_amount, log.p2_amount)
-                stats.p2_level1_amount = self.get_amount(stats.p2_level1_amount, log.p1_amount)
+                stats.p1_direct_amount = self.get_amount(stats.p1_direct_amount, log.p2_amount)
+                stats.p2_direct_amount = self.get_amount(stats.p2_direct_amount, log.p1_amount)
                 if log.winner == p2_name:
-                    stats.p1_level1_wins = self.increment(stats.p1_level1_wins)
+                    stats.p1_direct_wins = self.increment(stats.p1_direct_wins)
                 else:
-                    stats.p2_level1_wins = self.increment(stats.p2_level1_wins)
+                    stats.p2_direct_wins = self.increment(stats.p2_direct_wins)
 
     def calc_streaks(self, stats, log, p1_name, p2_name):
         if log.p1_name == p1_name:

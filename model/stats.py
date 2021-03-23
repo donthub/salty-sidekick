@@ -9,10 +9,10 @@ class Stats:
         self.p2_total_wins = None
         self.p2_total_losses = None
 
-        self.p1_level1_wins = None
-        self.p1_level1_amount = None
-        self.p2_level1_wins = None
-        self.p2_level1_amount = None
+        self.p1_direct_wins = None
+        self.p1_direct_amount = None
+        self.p2_direct_wins = None
+        self.p2_direct_amount = None
 
         self.p1_streak = None
         self.p2_streak = None
@@ -21,14 +21,14 @@ class Stats:
         tier = self.tier
         p1_name = self.format(self.p1_name)
         p2_name = self.format(self.p2_name)
-        p1_level1_wins = self.format(self.p1_level1_wins)
-        p2_level1_wins = self.format(self.p2_level1_wins)
-        p1_level1_wl_ratio = self.format(self.get_ratio(self.p1_level1_wins, self.p2_level1_wins))
-        p2_level1_wl_ratio = self.format(self.get_ratio(self.p2_level1_wins, self.p1_level1_wins))
-        p1_level1_amount = self.format(self.p1_level1_amount)
-        p2_level1_amount = self.format(self.p2_level1_amount)
-        p1_level1_odds = self.format(self.get_p1_level1_odds())
-        p2_level1_odds = self.format(self.get_p2_level1_odds())
+        p1_direct_wins = self.format(self.p1_direct_wins)
+        p2_direct_wins = self.format(self.p2_direct_wins)
+        p1_direct_wl_ratio = self.format(self.get_ratio(self.p1_direct_wins, self.p2_direct_wins))
+        p2_direct_wl_ratio = self.format(self.get_ratio(self.p2_direct_wins, self.p1_direct_wins))
+        p1_direct_amount = self.format(self.p1_direct_amount)
+        p2_direct_amount = self.format(self.p2_direct_amount)
+        p1_direct_odds = self.format(self.get_p1_direct_odds())
+        p2_direct_odds = self.format(self.get_p2_direct_odds())
         p1_total_wins = self.format(self.p1_total_wins)
         p2_total_wins = self.format(self.p2_total_wins)
         p1_total_losses = self.format(self.p1_total_losses)
@@ -42,10 +42,10 @@ class Stats:
             |-----------------------------------------------------------------------------------|
             | {tier} tier          | {p1_name} | {p2_name} |
             |-----------------------------------------------------------------------------------|
-            | level1 wins     | {p1_level1_wins} | {p2_level1_wins} | 
-            | level1 wl ratio | {p1_level1_wl_ratio} | {p2_level1_wl_ratio} |
-            | level1 amount   | {p1_level1_amount} | {p2_level1_amount} |
-            | level1 odds     | {p1_level1_odds} | {p2_level1_odds} |
+            | direct wins     | {p1_direct_wins} | {p2_direct_wins} | 
+            | direct wl ratio | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
+            | direct amount   | {p1_direct_amount} | {p2_direct_amount} |
+            | direct odds     | {p1_direct_odds} | {p2_direct_odds} |
             |-----------------------------------------------------------------------------------|
             | total wins      | {p1_total_wins} | {p2_total_wins} |
             | total losses    | {p1_total_losses} | {p2_total_losses} |
@@ -55,34 +55,28 @@ class Stats:
         """
 
     def get_ratio(self, dividend, divisor):
-        if dividend is None and divisor is None:
+        if dividend is None or divisor is None:
             return None
+        else:
+            return round(dividend / (dividend + divisor / 100))
 
-        if dividend is None:
-            return f'None/{divisor}'
-
-        if divisor is None:
-            return f'{dividend}/None'
-
-        return round(dividend / (dividend + divisor / 100))
-
-    def get_p1_level1_odds(self):
-        if self.p1_level1_amount is None or self.p2_level1_amount is None:
+    def get_p1_direct_odds(self):
+        if self.p1_direct_amount is None or self.p2_direct_amount is None:
             return '-'
 
-        if self.p1_level1_amount > self.p2_level1_amount:
-            return round(self.p1_level1_amount / self.p2_level1_amount, 2)
+        if self.p1_direct_amount > self.p2_direct_amount:
+            return round(self.p1_direct_amount / self.p2_direct_amount, 2)
         else:
             return 1
 
-    def get_p2_level1_odds(self):
-        if self.p1_level1_amount is None or self.p2_level1_amount is None:
+    def get_p2_direct_odds(self):
+        if self.p1_direct_amount is None or self.p2_direct_amount is None:
             return '-'
 
-        if self.p1_level1_amount > self.p2_level1_amount:
+        if self.p1_direct_amount > self.p2_direct_amount:
             return 1
         else:
-            return round(self.p2_level1_amount / self.p1_level1_amount, 2)
+            return round(self.p2_direct_amount / self.p1_direct_amount, 2)
 
     def format(self, value, width=30):
         if value is None:

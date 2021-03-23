@@ -30,7 +30,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
             return
 
         message = event.arguments[0]
-        print(f'{event.source.nick}: {message}')
+        # print(f'{event.source.nick}: {message}')
 
         try:
             self.parse(message)
