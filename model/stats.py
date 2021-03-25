@@ -35,8 +35,8 @@ class Stats:
         p2_total_losses = self.format(self.p2_total_losses)
         p1_total_wl_ratio = self.format(self.get_ratio(self.p1_total_wins, self.p1_total_losses))
         p2_total_wl_ratio = self.format(self.get_ratio(self.p2_total_wins, self.p2_total_losses))
-        p1_streak = self.format(self.p1_streak)
-        p2_streak = self.format(self.p2_streak)
+        p1_streak = self.format(self.get_streak(self.p1_streak))
+        p2_streak = self.format(self.get_streak(self.p2_streak))
 
         return f"""
             |-----------------------------------------------------------------------------------|
@@ -54,11 +54,11 @@ class Stats:
             |-----------------------------------------------------------------------------------|
         """
 
-    def get_ratio(self, dividend, divisor):
-        if dividend is None or divisor is None:
+    def get_ratio(self, wins, losses):
+        if wins is None or losses is None:
             return None
         else:
-            return round(dividend / (dividend + divisor / 100))
+            return f'{round(wins / (wins + losses) * 100)}%'
 
     def get_p1_direct_odds(self):
         if self.p1_direct_amount is None or self.p2_direct_amount is None:
@@ -77,6 +77,15 @@ class Stats:
             return 1
         else:
             return round(self.p2_direct_amount / self.p1_direct_amount, 2)
+
+    def get_streak(self, value):
+        if value is None:
+            return None
+
+        if value > 0:
+            return f'+{value}'
+        else:
+            return value
 
     def format(self, value, width=30):
         if value is None:
