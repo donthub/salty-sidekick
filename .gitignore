@@ -1,5 +1,6 @@
 .idea/
 build/
+dist/
 venv/
 **/__pycache__/*
 Salty.egg-info
