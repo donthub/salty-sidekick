@@ -1,3 +1,4 @@
+import logging
 import os
 import sqlite3
 from sqlite3 import Error
@@ -33,7 +34,7 @@ class Database:
             self.connection = sqlite3.connect(self.db_path)
             self.cursor = self.connection.cursor()
         except Error as e:
-            print(e)
+            logging.error(e)
 
     def setup_tables(self):
         if self.is_sql_setup:

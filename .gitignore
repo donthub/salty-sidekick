@@ -1,8 +1,12 @@
+# General
 .idea/
 build/
 dist/
 venv/
 **/__pycache__/*
 Salty.egg-info
+
+# Application
+logs/
 config.json
 database.db

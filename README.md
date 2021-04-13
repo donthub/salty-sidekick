@@ -4,6 +4,8 @@ Collects and displays SaltyBet match information.
 
 # Pre-requisites
 
+Python version `3.9` or greater.
+
 `config.json`:
 
 * `username`: Twitch username

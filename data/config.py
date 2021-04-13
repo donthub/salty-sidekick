@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 
@@ -12,7 +13,7 @@ class Config:
         if not os.path.isfile(self.path):
             with open(self.path, 'w', encoding='utf-8') as file:
                 json.dump({'username': '', 'oauth_token': ''}, file)
-            print('"config.json" created in root. Please modify it with the required values.')
+            logging.warning('"config.json" created in root. Please modify it with the required values.')
             exit(-1)
 
         with open(self.path, 'r', encoding='utf-8') as file:
@@ -21,7 +22,8 @@ class Config:
         username = self.strip(auth['username'])
         oauth_token = self.strip(auth['oauth_token'])
         if len(username) == 0 or self.is_invalid_token(oauth_token):
-            print('"config.json" in root is not configured properly. Please fill "username" and "oauth_token" values.')
+            logging.warning(
+                '"config.json" in root is not configured properly. Please fill "username" and "oauth_token" values.')
             exit(-1)
 
         if not oauth_token.startswith('oauth:'):

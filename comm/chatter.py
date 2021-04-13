@@ -1,3 +1,5 @@
+import logging
+
 import irc.bot
 import re
 
@@ -12,7 +14,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
 
         server = 'irc.chat.twitch.tv'
         port = 6667
-        print(f'Connecting to {server} on port {port}...')
+        logging.info(f'Connecting to {server} on port {port}...')
 
         auth = config.get_auth()
         username = auth[0]
@@ -20,17 +22,17 @@ class Chatter(irc.bot.SingleServerIRCBot):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, oauth_token)], username, username)
 
     def on_welcome(self, connection, event):
-        print(f'Joining {self.channel}...')
+        logging.info(f'Joining {self.channel}...')
 
         connection.join(self.channel)
-        print('Joined.')
+        logging.info('Joined.')
 
     def on_pubmsg(self, connection, event):
         if event.source.nick != 'waifu4u':
             return
 
         message = event.arguments[0]
-        # print(f'{event.source.nick}: {message}')
+        logging.debug(f'{event.source.nick}: {message}')
 
         try:
             self.parse(message)
@@ -51,7 +53,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) {2}\(matchmaking\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
-            print('--- Matchmaking players')
+            logging.info('--- Matchmaking players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
                                        mode='MATCHMAKING')
             # Matchmaking players
@@ -62,7 +64,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) {2}tournament bracket: http://www\.saltybet\.com/shaker\?bracket=1$'
         match = re.compile(pattern).match(message)
         if match:
-            print('--- Tournament players')
+            logging.info('--- Tournament players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
                                        mode='TOURNAMENT')
             # Tournament players
@@ -72,7 +74,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
     def parse_start_exhibition(self, message):
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
         if re.compile(pattern).match(message):
-            print('--- Exhibition players')
+            logging.info('--- Exhibition players')
             # Exhibition players
             # Bets are OPEN for Carriage driver vs Servant emiya! (Requested by Alipheese)  (exhibitions) www.saltybet.com
             raise self.MessageFound()
@@ -85,7 +87,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         pattern = r'^Bets are locked\. (.+) \((.+)\) - \$(.+), (.+) \((.+)\) - \$(.+)$'
         match = re.compile(pattern).match(message)
         if match:
-            print('--- Matchmaking / Tournament locked')
+            logging.info('--- Matchmaking / Tournament locked')
             self.collector.lock_match(p1_streak=match.group(2), p1_amount=match.group(3), p2_streak=match.group(5),
                                       p2_amount=match.group(6))
             # Matchmaking locked
@@ -95,7 +97,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
     def parse_locked_exhibition(self, message):
         pattern = r'^Bets are locked\. (.+)- \$(.+), (.+)- \$(.+)$'
         if re.compile(pattern).match(message):
-            print('--- Exhibition locked')
+            logging.info('--- Exhibition locked')
             # Exhibition locked
             # Bets are locked. Carriage driver- $1,480,823, Servant emiya- $3,008,605
             raise self.MessageFound()
@@ -104,7 +106,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         pattern = r'^(.+) wins! Payouts to Team (.+)\.(.*)$'
         match = re.compile(pattern).match(message)
         if match:
-            print('--- Payout')
+            logging.info('--- Payout')
             self.collector.end_match(winner=match.group(1))
             # Matchmaking payout
             # Gyarados wins! Payouts to Team Blue. 93 more matches until the next tournament!
