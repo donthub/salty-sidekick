@@ -82,6 +82,6 @@ class Model:
 
     def get_amount(self, current, added):
         if current is None:
-            return added
+            return int(added)
         else:
-            return current + added
+            return int(current) + int(added)
