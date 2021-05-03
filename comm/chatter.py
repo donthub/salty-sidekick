@@ -1,6 +1,5 @@
 import logging
 import re
-import time
 from datetime import datetime, timedelta
 
 import irc.bot
@@ -24,16 +23,22 @@ class Chatter(irc.bot.SingleServerIRCBot):
         oauth_token = auth[1]
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, oauth_token)], username, username)
 
-    def run_infinitely(self):
-        self.start()
-
+    def start(self):
+        self._connect()
         while True:
-            if datetime.now() - self.last_message_date > timedelta(minutes=10):
-                logging.info('Chat has timed out. Restarting...')
-                self.disconnect()
-                self.start()
-                logging.info('Restarted...')
-            time.sleep(60)
+            if self.is_timeout():
+                self.restart()
+            self.reactor.process_once(timeout=0.2)
+
+    def is_timeout(self):
+        return datetime.now() - self.last_message_date > timedelta(minutes=5)
+
+    def restart(self):
+        logging.info('Chat has timed out. Restarting...')
+        self.disconnect()
+        self.collector.state = None
+        self._connect()
+        logging.info('Restarted...')
 
     def on_welcome(self, connection, event):
         logging.info(f'Joining {self.channel}...')

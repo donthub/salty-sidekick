@@ -13,4 +13,4 @@ if __name__ == '__main__':
     collector = Collector(model)
 
     bot = Chatter(config, collector)
-    bot.run_infinitely()
+    bot.start()
