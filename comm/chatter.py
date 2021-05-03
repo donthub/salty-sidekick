@@ -1,7 +1,9 @@
 import logging
+import re
+import time
+from datetime import datetime, timedelta
 
 import irc.bot
-import re
 
 
 class Chatter(irc.bot.SingleServerIRCBot):
@@ -11,6 +13,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
     def __init__(self, config, collector, channel='saltybet'):
         self.collector = collector
         self.channel = '#' + channel
+        self.last_message_date = datetime.now()
 
         server = 'irc.chat.twitch.tv'
         port = 6667
@@ -21,6 +24,17 @@ class Chatter(irc.bot.SingleServerIRCBot):
         oauth_token = auth[1]
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, oauth_token)], username, username)
 
+    def run_infinitely(self):
+        self.start()
+
+        while True:
+            if datetime.now() - self.last_message_date > timedelta(minutes=10):
+                logging.info('Chat has timed out. Restarting...')
+                self.disconnect()
+                self.start()
+                logging.info('Restarted...')
+            time.sleep(60)
+
     def on_welcome(self, connection, event):
         logging.info(f'Joining {self.channel}...')
 
@@ -28,6 +42,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         logging.info('Joined.')
 
     def on_pubmsg(self, connection, event):
+        self.last_message_date = datetime.now()
         if event.source.nick != 'waifu4u':
             return
 

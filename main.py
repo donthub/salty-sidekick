@@ -11,5 +11,6 @@ if __name__ == '__main__':
     database = Database()
     model = Model(database)
     collector = Collector(model)
+
     bot = Chatter(config, collector)
-    bot.start()
+    bot.run_infinitely()
