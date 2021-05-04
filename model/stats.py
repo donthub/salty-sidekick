@@ -1,8 +1,9 @@
 class Stats:
-    def __init__(self, p1_name, p2_name, tier):
+    def __init__(self, p1_name, p2_name, tier, mode):
         self.p1_name = p1_name
         self.p2_name = p2_name
         self.tier = tier
+        self.mode = mode
 
         self.p1_total_wins = None
         self.p1_total_losses = None
@@ -18,6 +19,7 @@ class Stats:
         self.p2_streak = None
 
     def to_text(self):
+        mode = self.format_mode(self.mode)
         tier = self.tier
         p1_name = self.format(self.p1_name)
         p2_name = self.format(self.p2_name)
@@ -40,7 +42,7 @@ class Stats:
 
         return f"""
             |-----------------------------------------------------------------------------------|
-            | {tier} tier          | {p1_name} | {p2_name} |
+            | [{mode}] {tier} tier     | {p1_name} | {p2_name} |
             |-----------------------------------------------------------------------------------|
             | direct wins     | {p1_direct_wins} | {p2_direct_wins} | 
             | direct wl ratio | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
@@ -92,3 +94,11 @@ class Stats:
             return f"{'-':<{width}}"
         else:
             return f'{value:<{width}}'
+
+    def format_mode(self, mode):
+        if mode == 'MATCHMAKING':
+            return 'MM'
+        elif mode == 'TOURNAMENT':
+            return 'TO'
+        else:
+            return '??'

@@ -31,7 +31,7 @@ class Collector:
         self.tier = tier
         self.mode = mode
 
-        stats = self.model.get_stats(p1_name, p2_name, tier)
+        stats = self.model.get_stats(p1_name, p2_name, tier, mode)
         logging.info(stats.to_text())
 
     def lock_match(self, p1_streak, p1_amount, p2_streak, p2_amount):

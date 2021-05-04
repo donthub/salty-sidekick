@@ -107,7 +107,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         pattern = r'^Bets are locked\. (.+) \((.+)\) - \$(.+), (.+) \((.+)\) - \$(.+)$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Matchmaking / Tournament locked')
+            logging.info('--- Locked')
             self.collector.lock_match(p1_streak=match.group(2), p1_amount=match.group(3), p2_streak=match.group(5),
                                       p2_amount=match.group(6))
             # Matchmaking locked
