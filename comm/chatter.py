@@ -1,11 +1,11 @@
 import logging
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import irc.bot
+from comm.chatterbase import ChatterBase
 
 
-class Chatter(irc.bot.SingleServerIRCBot):
+class Chatter(ChatterBase):
     class MessageFound(Exception):
         pass
 
@@ -21,27 +21,10 @@ class Chatter(irc.bot.SingleServerIRCBot):
         auth = config.get_auth()
         username = auth[0]
         oauth_token = auth[1]
-        irc.bot.SingleServerIRCBot.__init__(self, [(server, port, oauth_token)], username, username)
-
-    def start(self):
-        self._connect()
-        while True:
-            if self.is_timeout():
-                self.restart()
-            self.reactor.process_once(timeout=0.2)
-
-    def is_timeout(self):
-        return datetime.now() - self.last_message_date > timedelta(minutes=5)
-
-    def restart(self):
-        logging.info('Chat has timed out. Restarting...')
-        self.disconnect()
-        self.collector.state = None
-        self.last_message_date = datetime.now()
-        self._connect()
-        logging.info('Restarted...')
+        ChatterBase.__init__(self, server, port, oauth_token, username)
 
     def on_welcome(self, connection, event):
+        self.collector.state = None
         logging.info(f'Joining {self.channel}...')
 
         connection.join(self.channel)
