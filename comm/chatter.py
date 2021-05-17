@@ -37,6 +37,7 @@ class Chatter(irc.bot.SingleServerIRCBot):
         logging.info('Chat has timed out. Restarting...')
         self.disconnect()
         self.collector.state = None
+        self.last_message_date = datetime.now()
         self._connect()
         logging.info('Restarted...')
 
