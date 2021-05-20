@@ -46,6 +46,11 @@ class MessageParser:
             raise self.MessageFound()
 
     def parse_start_exhibition(self, message):
+        self.parse_start_exhibition_untiered(message)
+        self.parse_start_exhibition_tiered(message)
+        self.parse_start_exhibition_double_tiered(message)
+
+    def parse_start_exhibition_untiered(self, message):
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
@@ -54,6 +59,28 @@ class MessageParser:
                                        left=self.left)
             # Exhibition players
             # Bets are OPEN for Carriage driver vs Servant emiya! (Requested by Alipheese)  (exhibitions) www.saltybet.com
+            raise self.MessageFound()
+
+    def parse_start_exhibition_tiered(self, message):
+        pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
+        match = re.compile(pattern).match(message)
+        if match:
+            logging.info('--- Exhibition players')
+            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
+                                       mode='EXHIBITION', left=self.left)
+            # Exhibition players
+            # Bets are OPEN for Prismatic jam vs Robert garcia EX2! (S Tier) (Requested by Issacookieson) (exhibitions) www.saltybet.com
+            raise self.MessageFound()
+
+    def parse_start_exhibition_double_tiered(self, message):
+        pattern = r'^Bets are OPEN for (.+) vs (.+)! \((. \/ .) Tier\) \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
+        match = re.compile(pattern).match(message)
+        if match:
+            logging.info('--- Exhibition players')
+            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
+                                       mode='EXHIBITION', left=self.left)
+            # Exhibition players
+            # Bets are OPEN for Team BigWhores vs Team WhoresBig! (S / S Tier) (Requested by hopexdxcruz) (exhibitions) www.saltybet.com
             raise self.MessageFound()
 
     def parse_locked(self, message):
@@ -94,6 +121,7 @@ class MessageParser:
             # Spera wins! Payouts to Team Blue. FINAL ROUND! Stay tuned for exhibitions after the tournament!
             # Team HordesofLaw wins! Payouts to Team Red. 2 exhibition matches left!
             # Ratking wins! Payouts to Team Red. Tournament mode will be activated after the next match!
+            # Hunk wins! Payouts to Team Red. Matchmaking mode will be activated after the next exhibition match!
             raise self.MessageFound()
 
     def parse_left(self, message):
