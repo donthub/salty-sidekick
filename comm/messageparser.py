@@ -88,7 +88,7 @@ class MessageParser:
             pattern = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
             match = re.compile(pattern).match(message)
             if match:
-                self.left = match.group(3)
+                self.left = int(match.group(3))
             elif self.left is not None:
                 self.left -= 1
 
@@ -98,4 +98,5 @@ class MessageParser:
             # Ninja_kun wins! Payouts to Team Red. 10 characters are left in the bracket!
             # Spera wins! Payouts to Team Blue. FINAL ROUND! Stay tuned for exhibitions after the tournament!
             # Team HordesofLaw wins! Payouts to Team Red. 2 exhibition matches left!
+            # Ratking wins! Payouts to Team Red. Tournament mode will be activated after the next match!
             raise self.MessageFound()
