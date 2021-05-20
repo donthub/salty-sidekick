@@ -109,7 +109,8 @@ class Stats:
 
     def format_left(self, left):
         if left is None:
-            return self.format(left)
+            left = '?'
+            match_str = 'matches'
         elif left == 1:
             match_str = 'match'
         else:
