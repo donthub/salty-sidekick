@@ -85,9 +85,9 @@ class MessageParser:
         if match:
             logging.info('--- Payout')
 
-            pattern = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
-            match = re.compile(pattern).match(message)
-            if match:
+            pattern_left = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
+            match_left = re.compile(pattern_left).match(message)
+            if match_left:
                 self.left = int(match.group(3))
             elif self.left is not None:
                 self.left -= 1
