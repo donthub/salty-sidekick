@@ -1,33 +1,37 @@
 import json
 import logging
 import os
+import shutil
 
 
 class Config:
 
-    def __init__(self, path='config.json'):
+    def __init__(self, path='config.json', sample_path='config_sample.json'):
         self.path = path
+        self.sample_path = sample_path
         self.auth = self.get_auth()
 
     def get_auth(self):
         if not os.path.isfile(self.path):
-            with open(self.path, 'w', encoding='utf-8') as file:
-                json.dump({'username': '', 'oauth_token': ''}, file)
-            logging.warning('"config.json" created in root. Please modify it with the required values.')
-            exit(-1)
+            if os.path.isfile(self.sample_path):
+                shutil.copyfile(self.sample_path, self.path)
+            else:
+                logging.warning(
+                    '"config_sample.json" is missing in root. Please restore it or create "config.json" manually.')
+                exit(-1)
 
         with open(self.path, 'r', encoding='utf-8') as file:
-            auth = json.load(file)
+            config = json.load(file)
 
-        username = self.strip(auth['username'])
-        oauth_token = self.strip(auth['oauth_token'])
+        username = self.strip(config['username'])
+        oauth_token = self.strip(config['oauth_token'])
         if len(username) == 0 or self.is_invalid_token(oauth_token):
             logging.warning(
                 '"config.json" in root is not configured properly. Please fill "username" and "oauth_token" values.')
             exit(-1)
 
         if not oauth_token.startswith('oauth:'):
-            oauth_token = f"oauth:{auth['oauth_token']}"
+            oauth_token = f"oauth:{oauth_token}"
 
         return username, oauth_token
 
