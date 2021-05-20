@@ -17,7 +17,7 @@ class LogUtil:
     def init_file_handler(self, log_formatter):
         log_filename = "logs/output.log"
         os.makedirs(os.path.dirname(log_filename), exist_ok=True)
-        handler = RotatingFileHandler(filename=log_filename, maxBytes=1000000000, backupCount=10, encoding='utf-8')
+        handler = RotatingFileHandler(filename=log_filename, maxBytes=10000000, backupCount=10, encoding='utf-8')
         handler.setFormatter(log_formatter)
         return handler
 

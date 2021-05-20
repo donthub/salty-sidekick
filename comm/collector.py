@@ -19,7 +19,7 @@ class Collector:
 
         self.winner = None
 
-    def start_match(self, p1_name, p2_name, tier, mode):
+    def start_match(self, p1_name, p2_name, tier, mode, left):
         logging.info(f'--- P1 name: {p1_name}, P2 name: {p2_name}, tier: {tier}')
         if self.state is not None and self.state != 'end':
             logging.info(f'--- Invalid state: {self.state}. Skipping...')
@@ -31,7 +31,7 @@ class Collector:
         self.tier = tier
         self.mode = mode
 
-        stats = self.model.get_stats(p1_name, p2_name, tier, mode)
+        stats = self.model.get_stats(p1_name, p2_name, tier, mode, left)
         logging.info(stats.to_text())
 
     def lock_match(self, p1_streak, p1_amount, p2_streak, p2_amount):
@@ -59,6 +59,9 @@ class Collector:
         self.state = 'end'
         if winner != self.p1_name and winner != self.p2_name:
             logging.info(f'--- Invalid result. Resetting...')
+            return
+
+        if self.mode == 'EXHIBITION':
             return
 
         self.winner = winner

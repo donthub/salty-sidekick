@@ -19,8 +19,8 @@ class Model:
         self.database.add_log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode)
         self.logs.append(Log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode))
 
-    def get_stats(self, p1_name, p2_name, tier, mode):
-        stats = Stats(p1_name, p2_name, tier, mode)
+    def get_stats(self, p1_name, p2_name, tier, mode, left):
+        stats = Stats(p1_name, p2_name, tier, mode, left)
         for log in self.logs:
             if log.p1_name != p1_name and log.p1_name != p2_name and log.p2_name != p1_name and log.p2_name != p2_name:
                 continue
