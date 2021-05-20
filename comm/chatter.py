@@ -1,9 +1,8 @@
 import logging
 from datetime import datetime
 
-from model.messageparser import MessageParser
-
 from comm.chatterbase import ChatterBase
+from comm.messageparser import MessageParser
 
 
 class Chatter(ChatterBase):
