@@ -50,8 +50,8 @@ class MessageParser:
         match = re.compile(pattern).match(message)
         if match:
             logging.info('--- Exhibition players')
-            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
-                                       mode='EXHIBITION', left=self.left)
+            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=None, mode='EXHIBITION',
+                                       left=self.left)
             # Exhibition players
             # Bets are OPEN for Carriage driver vs Servant emiya! (Requested by Alipheese)  (exhibitions) www.saltybet.com
             raise self.MessageFound()
@@ -73,8 +73,10 @@ class MessageParser:
 
     def parse_locked_exhibition(self, message):
         pattern = r'^Bets are locked\. (.+)- \$(.+), (.+)- \$(.+)$'
-        if re.compile(pattern).match(message):
+        match = re.compile(pattern).match(message)
+        if match:
             logging.info('--- Exhibition locked')
+            self.collector.lock_match(p1_streak=0, p1_amount=match.group(2), p2_streak=0, p2_amount=match.group(4))
             # Exhibition locked
             # Bets are locked. Carriage driver- $1,480,823, Servant emiya- $3,008,605
             raise self.MessageFound()
@@ -84,14 +86,7 @@ class MessageParser:
         match = re.compile(pattern).match(message)
         if match:
             logging.info('--- Payout')
-
-            pattern_left = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
-            match_left = re.compile(pattern_left).match(message)
-            if match_left:
-                self.left = int(match_left.group(3))
-            elif self.left is not None:
-                self.left -= 1
-
+            self.parse_left(message)
             self.collector.end_match(winner=match.group(1))
             # Matchmaking payout
             # Gyarados wins! Payouts to Team Blue. 93 more matches until the next tournament!
@@ -100,3 +95,11 @@ class MessageParser:
             # Team HordesofLaw wins! Payouts to Team Red. 2 exhibition matches left!
             # Ratking wins! Payouts to Team Red. Tournament mode will be activated after the next match!
             raise self.MessageFound()
+
+    def parse_left(self, message):
+        pattern = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
+        match = re.compile(pattern).match(message)
+        if match:
+            self.left = int(match.group(3))
+        elif self.left is not None:
+            self.left -= 1

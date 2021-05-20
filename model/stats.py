@@ -103,6 +103,8 @@ class Stats:
         return self.format(value=str(mode).title(), width=15)
 
     def format_tier(self, tier):
+        if tier is None:
+            tier = '?'
         return self.format(value=f'{tier} tier')
 
     def format_left(self, left):
