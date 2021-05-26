@@ -19,6 +19,11 @@ class Stats:
         self.p1_streak = None
         self.p2_streak = None
 
+        self.p1_skill = None
+        self.p1_probability = None
+        self.p2_skill = None
+        self.p2_probability = None
+
     def to_text(self):
         mode = self.format_mode(self.mode)
         tier = self.format_tier(self.tier)
@@ -41,6 +46,12 @@ class Stats:
         p2_total_wl_ratio = self.format(self.get_ratio(self.p2_total_wins, self.p2_total_losses))
         p1_streak = self.format(self.get_streak(self.p1_streak))
         p2_streak = self.format(self.get_streak(self.p2_streak))
+        p1_confidence = self.format_float(self.p1_skill.sigma)
+        p2_confidence = self.format_float(self.p2_skill.sigma)
+        p1_skill = self.format_skill(self.p1_skill)
+        p2_skill = self.format_skill(self.p2_skill)
+        p1_probability = self.format_probability(self.p1_probability)
+        p2_probability = self.format_probability(self.p2_probability)
 
         return f"""
             |-----------------------------------------------------------------------------------|
@@ -57,6 +68,10 @@ class Stats:
             | Total losses    | {p1_total_losses} | {p2_total_losses} |
             | Total wl ratio  | {p1_total_wl_ratio} | {p2_total_wl_ratio} |
             | Streak          | {p1_streak} | {p2_streak} |
+            |-----------------------------------------------------------------------------------|
+            | Skill           | {p1_skill} | {p2_skill} |
+            | Confidence      | {p1_confidence} | {p2_confidence} |
+            | Probability     | {p1_probability} | {p2_probability} |
             |-----------------------------------------------------------------------------------|
         """
 
@@ -116,3 +131,14 @@ class Stats:
         else:
             match_str = 'matches'
         return self.format(value=f'{left} {match_str} left')
+
+    def format_float(self, value):
+        return self.format(value=f'{value:.2f}')
+
+    def format_skill(self, skill):
+        min = skill.mu - 2 * skill.sigma
+        max = skill.mu + 2 * skill.sigma
+        return self.format(value=f'{skill.mu:.2f} ({min:.2f} - {max:.2f})')
+
+    def format_probability(self, probability):
+        return self.format(value=f'{probability:.1%}')
