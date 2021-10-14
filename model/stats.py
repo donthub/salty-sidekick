@@ -1,65 +1,43 @@
 class Stats:
-    def __init__(self, p1_name, p2_name, tier, mode, left):
-        self.p1_name = p1_name
-        self.p2_name = p2_name
+    def __init__(self, p1, p2, tier, mode, left):
+        self.p1 = p1
+        self.p2 = p2
         self.tier = tier
         self.mode = mode
         self.left = left
-
-        self.p1_total_wins = None
-        self.p1_total_losses = None
-        self.p2_total_wins = None
-        self.p2_total_losses = None
-
-        self.p1_direct_wins = None
-        self.p1_direct_amount = None
-        self.p2_direct_wins = None
-        self.p2_direct_amount = None
-
-        self.p1_streak = None
-        self.p2_streak = None
-
-        self.p1_skill = None
-        self.p1_probability = None
-        self.p2_skill = None
-        self.p2_probability = None
-        self.p1_upset = None
-        self.p1_job = None
-        self.p2_upset = None
-        self.p2_job = None
 
     def to_text(self):
         mode = self.format_mode(self.mode)
         tier = self.format_tier(self.tier)
         left = self.format_left(self.left)
-        p1_name = self.format(self.p1_name)
-        p2_name = self.format(self.p2_name)
-        p1_direct_wins = self.format(self.p1_direct_wins)
-        p2_direct_wins = self.format(self.p2_direct_wins)
-        p1_direct_wl_ratio = self.format(self.get_ratio(self.p1_direct_wins, self.p2_direct_wins))
-        p2_direct_wl_ratio = self.format(self.get_ratio(self.p2_direct_wins, self.p1_direct_wins))
-        p1_direct_amount = self.format(self.p1_direct_amount)
-        p2_direct_amount = self.format(self.p2_direct_amount)
-        p1_direct_odds = self.format(self.get_p1_direct_odds())
-        p2_direct_odds = self.format(self.get_p2_direct_odds())
-        p1_total_wins = self.format(self.p1_total_wins)
-        p2_total_wins = self.format(self.p2_total_wins)
-        p1_total_losses = self.format(self.p1_total_losses)
-        p2_total_losses = self.format(self.p2_total_losses)
-        p1_total_wl_ratio = self.format(self.get_ratio(self.p1_total_wins, self.p1_total_losses))
-        p2_total_wl_ratio = self.format(self.get_ratio(self.p2_total_wins, self.p2_total_losses))
-        p1_streak = self.format(self.get_streak(self.p1_streak))
-        p2_streak = self.format(self.get_streak(self.p2_streak))
-        p1_confidence = self.format_confidence(self.p1_skill)
-        p2_confidence = self.format_confidence(self.p2_skill)
-        p1_skill = self.format_skill(self.p1_skill)
-        p2_skill = self.format_skill(self.p2_skill)
-        p1_probability = self.format_probability(self.p1_probability)
-        p2_probability = self.format_probability(self.p2_probability)
-        p1_upset = self.format_probability(self.p1_upset)
-        p2_upset = self.format_probability(self.p2_upset)
-        p1_job = self.format_probability(self.p1_job)
-        p2_job = self.format_probability(self.p2_job)
+        p1_name = self.format(self.p1.name)
+        p2_name = self.format(self.p2.name)
+        p1_direct_wins = self.format(self.p1.direct_wins)
+        p2_direct_wins = self.format(self.p2.direct_wins)
+        p1_direct_wl_ratio = self.format(self.get_ratio(self.p1.direct_wins, self.p2.direct_wins))
+        p2_direct_wl_ratio = self.format(self.get_ratio(self.p2.direct_wins, self.p1.direct_wins))
+        p1_direct_amount = self.format(self.p1.direct_amount)
+        p2_direct_amount = self.format(self.p2.direct_amount)
+        p1_direct_odds = self.format(self.get_direct_odds(self.p1, self.p2))
+        p2_direct_odds = self.format(self.get_direct_odds(self.p2, self.p1))
+        p1_total_wins = self.format(self.p1.total_wins)
+        p2_total_wins = self.format(self.p2.total_wins)
+        p1_total_losses = self.format(self.p1.total_losses)
+        p2_total_losses = self.format(self.p2.total_losses)
+        p1_total_wl_ratio = self.format(self.get_ratio(self.p1.total_wins, self.p1.total_losses))
+        p2_total_wl_ratio = self.format(self.get_ratio(self.p2.total_wins, self.p2.total_losses))
+        p1_streak = self.format(self.get_streak(self.p1.streak))
+        p2_streak = self.format(self.get_streak(self.p2.streak))
+        p1_confidence = self.format_confidence(self.p1.skill)
+        p2_confidence = self.format_confidence(self.p2.skill)
+        p1_skill = self.format_skill(self.p1.skill)
+        p2_skill = self.format_skill(self.p2.skill)
+        p1_probability = self.format_probability(self.p1.probability)
+        p2_probability = self.format_probability(self.p2.probability)
+        p1_upset = self.format_probability(self.p1.upset)
+        p2_upset = self.format_probability(self.p2.upset)
+        p1_job = self.format_probability(self.p1.job)
+        p2_job = self.format_probability(self.p2.job)
 
         return f"""
             |-----------------------------------------------------------------------------------|
@@ -92,23 +70,14 @@ class Stats:
         else:
             return f'{round(wins / (wins + losses) * 100)}%'
 
-    def get_p1_direct_odds(self):
-        if self.p1_direct_amount is None or self.p2_direct_amount is None:
+    def get_direct_odds(self, p1, p2):
+        if p1.direct_amount is None or p2.direct_amount is None:
             return '-'
 
-        if self.p1_direct_amount > self.p2_direct_amount:
-            return round(self.p1_direct_amount / self.p2_direct_amount, 2)
+        if p1.direct_amount > p2.direct_amount:
+            return round(p1.direct_amount / p2.direct_amount, 2)
         else:
             return 1
-
-    def get_p2_direct_odds(self):
-        if self.p1_direct_amount is None or self.p2_direct_amount is None:
-            return '-'
-
-        if self.p1_direct_amount > self.p2_direct_amount:
-            return 1
-        else:
-            return round(self.p2_direct_amount / self.p1_direct_amount, 2)
 
     def get_streak(self, value):
         if value is None:
