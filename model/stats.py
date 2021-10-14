@@ -23,6 +23,10 @@ class Stats:
         self.p1_probability = None
         self.p2_skill = None
         self.p2_probability = None
+        self.p1_upset = None
+        self.p1_job = None
+        self.p2_upset = None
+        self.p2_job = None
 
     def to_text(self):
         mode = self.format_mode(self.mode)
@@ -52,6 +56,10 @@ class Stats:
         p2_skill = self.format_skill(self.p2_skill)
         p1_probability = self.format_probability(self.p1_probability)
         p2_probability = self.format_probability(self.p2_probability)
+        p1_upset = self.format_probability(self.p1_upset)
+        p2_upset = self.format_probability(self.p2_upset)
+        p1_job = self.format_probability(self.p1_job)
+        p2_job = self.format_probability(self.p2_job)
 
         return f"""
             |-----------------------------------------------------------------------------------|
@@ -72,6 +80,9 @@ class Stats:
             | Skill           | {p1_skill} | {p2_skill} |
             | Confidence      | {p1_confidence} | {p2_confidence} |
             | Probability     | {p1_probability} | {p2_probability} |
+            |-----------------------------------------------------------------------------------|
+            | Upset           | {p1_upset} | {p2_upset} |
+            | Job             | {p1_job} | {p2_job} |
             |-----------------------------------------------------------------------------------|
         """
 
