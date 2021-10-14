@@ -10,7 +10,7 @@ from model.stats import Stats
 class Model:
     def __init__(self, database):
         self.database = database
-        self.logs = []
+        self.entries = {}
         self.skills = {}
         self.stats = {}
         self.init()
@@ -19,17 +19,20 @@ class Model:
         db_logs = self.database.get_logs()
         for db_log in db_logs:
             log = Log(db_log[0], db_log[1], db_log[2], db_log[3], db_log[4], db_log[5], db_log[6], db_log[7], db_log[8])
-            self.process_log(log)
+            self.add_log(log)
 
-    def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
-        log = Log(p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode)
-        self.database.add_log(log)
-        self.process_log(log)
-
-    def process_log(self, log):
-        self.logs.append(log)
+    def add_log(self, log):
+        self.add_entry(log)
         self.add_stats(log)
         self.add_skill(log)
+
+    def add_entry(self, log):
+        if log.p1_name not in self.entries:
+            self.entries[log.p1_name] = []
+        if log.p2_name not in self.entries:
+            self.entries[log.p2_name] = []
+        self.entries[log.p1_name].append(log)
+        self.entries[log.p2_name].append(log)
 
     def add_stats(self, log):
         self.create_skill(log.p1_name, log.tier)
@@ -82,15 +85,12 @@ class Model:
         p2 = Player(p2_name)
         stats = Stats(p1, p2, tier, mode, left)
 
-        for log in self.logs:
+        related = list(set().union(self.entries[p1.name], self.entries[p2.name]))
+        for log in related:
             if log.tier != tier:
                 continue
 
             if log.p1_name != log.winner and log.p2_name != log.winner:
-                continue
-
-            if log.p1_name != stats.p1.name and log.p1_name != stats.p2.name and \
-                    log.p2_name != stats.p1.name and log.p2_name != stats.p2.name:
                 continue
 
             self.calc_totals(stats, log)

@@ -15,7 +15,7 @@ if __name__ == '__main__':
     database = Database()
     logging.info('Initializing model...')
     model = Model(database)
-    collector = Collector(model)
+    collector = Collector(database, model)
 
     bot = Chatter(config, collector)
     bot.start()

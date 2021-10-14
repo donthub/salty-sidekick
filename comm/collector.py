@@ -1,9 +1,12 @@
 import logging
 
+from model.log import Log
+
 
 class Collector:
 
-    def __init__(self, model):
+    def __init__(self, database, model):
+        self.database = database
         self.model = model
         self.state = None
 
@@ -68,8 +71,9 @@ class Collector:
         self.p1_streak = self.get_player_streak(winner, self.p1_name, self.p1_streak)
         self.p2_streak = self.get_player_streak(winner, self.p2_name, self.p2_streak)
 
-        self.model.add_log(self.p1_name, self.p1_amount, self.p1_streak, self.p2_name, self.p2_amount, self.p2_streak,
-                           self.tier, self.winner, self.mode)
+        log = Log(self.p1_name, self.p1_amount, self.p1_streak, self.p2_name, self.p2_amount, self.p2_streak, self.tier, self.winner, self.mode)
+        self.database.add_log(log)
+        self.model.add_log(log)
 
     def get_player_streak(self, winner, player_name, player_streak):
         if winner == player_name:
