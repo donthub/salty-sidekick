@@ -56,14 +56,8 @@ class Model:
         if log.p1_name != log.winner and log.p2_name != log.winner:
             return
 
-        if log.p1_name not in skills:
-            skills[log.p1_name] = {}
-        if log.tier not in skills[log.p1_name]:
-            skills[log.p1_name][log.tier] = trueskill.Rating()
-        if log.p2_name not in skills:
-            skills[log.p2_name] = {}
-        if log.tier not in skills[log.p2_name]:
-            skills[log.p2_name][log.tier] = trueskill.Rating()
+        self.create_skill(skills, log.p1_name, log.tier)
+        self.create_skill(skills, log.p2_name, log.tier)
 
         winner = log.winner
         if winner == log.p1_name:
@@ -73,6 +67,12 @@ class Model:
 
         skills[winner][log.tier], skills[loser][log.tier] = trueskill.rate_1vs1(skills[winner][log.tier],
                                                                                 skills[loser][log.tier])
+
+    def create_skill(self, skills, name, tier):
+        if name not in skills:
+            skills[name] = {}
+        if tier not in skills[name]:
+            skills[name][tier] = trueskill.Rating()
 
     def calc_totals(self, stats, log, p1_name, p2_name):
         if log.p1_name == p1_name or log.p2_name == p1_name:
@@ -116,13 +116,12 @@ class Model:
             stats.p2_streak = log.p2_streak
 
     def calc_skills(self, stats, skills, p1_name, p2_name, tier):
-        if p1_name in skills.keys() and tier in skills[p1_name].keys():
-            stats.p1_skill = skills[p1_name][tier]
-            stats.p1_probability = self.calc_probability(skills[p1_name][tier], skills[p2_name][tier])
-
-        if p2_name in skills.keys() and tier in skills[p2_name].keys():
-            stats.p2_skill = skills[p2_name][tier]
-            stats.p2_probability = self.calc_probability(skills[p2_name][tier], skills[p1_name][tier])
+        self.create_skill(skills, p1_name, tier)
+        self.create_skill(skills, p2_name, tier)
+        stats.p1_skill = skills[p1_name][tier]
+        stats.p2_skill = skills[p2_name][tier]
+        stats.p1_probability = self.calc_probability(skills[p1_name][tier], skills[p2_name][tier])
+        stats.p2_probability = self.calc_probability(skills[p2_name][tier], skills[p1_name][tier])
 
     def calc_probability(self, p1_skill, p2_skill):
         delta_mu = p1_skill.mu - p2_skill.mu
