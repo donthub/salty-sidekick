@@ -10,6 +10,7 @@ Python version `3.9` or greater.
 
 * `username`: Twitch username
 * `oauth_token`: OAuth token for Twitch username.
+  * E.g.: https://twitchapps.com/tmi/ 
 
 `pip install -r requirements.txt`: Installs Python dependencies.
 

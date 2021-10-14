@@ -46,8 +46,8 @@ class Stats:
         p2_total_wl_ratio = self.format(self.get_ratio(self.p2_total_wins, self.p2_total_losses))
         p1_streak = self.format(self.get_streak(self.p1_streak))
         p2_streak = self.format(self.get_streak(self.p2_streak))
-        p1_confidence = self.format_float(self.p1_skill.sigma)
-        p2_confidence = self.format_float(self.p2_skill.sigma)
+        p1_confidence = self.format_confidence(self.p1_skill)
+        p2_confidence = self.format_confidence(self.p2_skill)
         p1_skill = self.format_skill(self.p1_skill)
         p2_skill = self.format_skill(self.p2_skill)
         p1_probability = self.format_probability(self.p1_probability)
@@ -132,13 +132,23 @@ class Stats:
             match_str = 'matches'
         return self.format(value=f'{left} {match_str} left')
 
+    def format_confidence(self, skill):
+        if skill is None:
+            return self.format(skill)
+        return self.format_float(skill.sigma)
+
     def format_float(self, value):
         return self.format(value=f'{value:.2f}')
 
     def format_skill(self, skill):
+        if skill is None:
+            return self.format(skill)
+
         min = skill.mu - 2 * skill.sigma
         max = skill.mu + 2 * skill.sigma
         return self.format(value=f'{skill.mu:.2f} ({min:.2f} - {max:.2f})')
 
     def format_probability(self, probability):
+        if probability is None:
+            return self.format(probability)
         return self.format(value=f'{probability:.1%}')

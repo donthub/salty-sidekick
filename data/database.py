@@ -16,6 +16,10 @@ class Database:
         self.connect()
         self.setup_tables()
 
+    def add_log(self, log):
+        self.add_log(log.p1_name, log.p1_amount, log.p1_streak, log.p2_name, log.p2_amount, log.p2_streak, log.tier,
+                     log.winner, log.mode)
+
     def add_log(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
         self.cursor.execute("""
             INSERT INTO logs (p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode, datetime)
