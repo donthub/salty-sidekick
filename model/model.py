@@ -85,8 +85,8 @@ class Model:
         p2 = Player(p2_name)
         stats = Stats(p1, p2, tier, mode, left)
 
-        related = list(set().union(self.entries[p1.name], self.entries[p2.name]))
-        for log in related:
+        logs = self.get_logs(p1, p2)
+        for log in logs:
             if log.tier != tier:
                 continue
 
@@ -100,6 +100,11 @@ class Model:
         self.calc_stats(stats, tier)
         self.calc_skills(stats, tier)
         return stats
+
+    def get_logs(self, p1, p2):
+        p1_logs = self.entries[p1.name] if p1.name in self.entries.keys() else []
+        p2_logs = self.entries[p2.name] if p2.name in self.entries.keys() else []
+        return list(set().union(p1_logs, p2_logs))
 
     def calc_totals(self, stats, log):
         if log.p1_name == stats.p1.name or log.p2_name == stats.p1.name:
