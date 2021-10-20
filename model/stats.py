@@ -23,8 +23,10 @@ class Stats:
         p2_name = self.format(self.p2.name)
         p1_direct_wins = self.format(self.get_direct_wins(self.p1_direct))
         p2_direct_wins = self.format(self.get_direct_wins(self.p2_direct))
-        p1_direct_wl_ratio = self.format_probability(self.get_ratio(self.p1_direct.wins, self.p1_direct.total))
-        p2_direct_wl_ratio = self.format_probability(self.get_ratio(self.p2_direct.wins, self.p2_direct.total))
+        p1_direct_wl_ratio = self.format_percent(self.get_ratio(self.p1_direct.wins, self.p1_direct.total))
+        p2_direct_wl_ratio = self.format_percent(self.get_ratio(self.p2_direct.wins, self.p2_direct.total))
+        p1_direct_wl_probability = self.format_percent(self.get_direct_wl_probability(self.p1_direct, self.p2_direct))
+        p2_direct_wl_probability = self.format_percent(self.get_direct_wl_probability(self.p2_direct, self.p1_direct))
         p1_direct_amount = self.format(self.get_direct_amount(self.p1_direct))
         p2_direct_amount = self.format(self.get_direct_amount(self.p2_direct))
         p1_direct_odds = self.format(self.get_direct_odds(self.p1_direct, self.p2_direct))
@@ -33,75 +35,102 @@ class Stats:
         p2_total_wins = self.format(self.get_total_wins(self.p2))
         p1_total_losses = self.format(self.get_total_losses(self.p1))
         p2_total_losses = self.format(self.get_total_losses(self.p2))
-        p1_total_wl_ratio = self.format_probability(self.get_ratio(self.p1.total_wins, self.p1.total_games))
-        p2_total_wl_ratio = self.format_probability(self.get_ratio(self.p2.total_wins, self.p2.total_games))
-        p1_total_wl_probability = self.format_probability(self.get_wl_probability(self.p1, self.p2))
-        p2_total_wl_probability = self.format_probability(self.get_wl_probability(self.p2, self.p1))
+        p1_total_wl_ratio = self.format_percent(self.get_ratio(self.p1.total_wins, self.p1.total_games))
+        p2_total_wl_ratio = self.format_percent(self.get_ratio(self.p2.total_wins, self.p2.total_games))
+        p1_total_wl_probability = self.format_percent(self.get_wl_probability(self.p1, self.p2))
+        p2_total_wl_probability = self.format_percent(self.get_wl_probability(self.p2, self.p1))
         p1_streak = self.format(self.get_streak(self.p1))
         p2_streak = self.format(self.get_streak(self.p2))
         p1_skill = self.format(self.get_skill(self.p1.skill))
         p2_skill = self.format(self.get_skill(self.p2.skill))
         p1_confidence = self.format_float(self.get_confidence(self.p1.skill))
         p2_confidence = self.format_float(self.get_confidence(self.p2.skill))
-        p1_probability = self.format_probability(self.get_probability(self.p1.skill, self.p2.skill))
-        p2_probability = self.format_probability(self.get_probability(self.p2.skill, self.p1.skill))
-        p1_upset = self.format_probability(self.get_ratio(self.p1.upset, self.p1.total_games))
-        p2_upset = self.format_probability(self.get_ratio(self.p2.upset, self.p2.total_games))
-        p1_job = self.format_probability(self.get_ratio(self.p1.job, self.p1.total_games))
-        p2_job = self.format_probability(self.get_ratio(self.p2.job, self.p2.total_games))
-        total_games = self.format_small(self.total.games)
-        total_p1_wins = self.format_probability_small(self.get_ratio(self.total.p1_wins, self.total.games))
-        total_p2_wins = self.format_probability_small(self.get_ratio(self.total.p2_wins, self.total.games))
-        total_wl_games = self.format_very_small(self.total.wl_games)
-        total_wl_wins_games = self.format_very_small(self.total.wl_wins)
-        total_wl_wins = self.format_probability_very_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
-        total_wl_wins_odds = self.format_very_small(self.get_odds(self.total.wl_wins_odds, self.total.wl_wins))
-        total_wl_wins_amount = self.format_small(self.get_amount(self.total.wl_wins_amount))
-        total_wl_losses = self.format_probability_very_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
-        total_wl_losses_games = self.format_very_small(self.total.wl_losses)
-        total_wl_losses_odds = self.format_very_small(self.get_odds(self.total.wl_losses_odds, self.total.wl_losses))
-        total_wl_losses_amount = self.format_small(self.get_amount(self.total.wl_losses_amount))
-        total_probability_games = self.format_very_small(self.total.probability_games)
-        total_probability_wins = self.format_probability_very_small(self.get_ratio(self.total.probability_wins, self.total.probability_games))
-        total_probability_wins_games = self.format_very_small(self.total.probability_wins)
-        total_probability_wins_odds = self.format_very_small(self.get_odds(self.total.probability_wins_odds, self.total.probability_wins))
-        total_probability_wins_amount = self.format_small(self.get_amount(self.total.probability_wins_amount))
-        total_probability_losses = self.format_probability_very_small(self.get_ratio(self.total.probability_losses, self.total.probability_games))
-        total_probability_losses_games = self.format_very_small(self.total.probability_losses)
-        total_probability_losses_odds = self.format_very_small(self.get_odds(self.total.probability_losses_odds, self.total.probability_losses))
-        total_probability_losses_amount = self.format_small(self.get_amount(self.total.probability_losses_amount))
+        p1_probability = self.format_percent(self.get_probability(self.p1.skill, self.p2.skill))
+        p2_probability = self.format_percent(self.get_probability(self.p2.skill, self.p1.skill))
+        p1_upset = self.format_percent(self.get_ratio(self.p1.upset, self.p1.total_games))
+        p2_upset = self.format_percent(self.get_ratio(self.p2.upset, self.p2.total_games))
+        p1_job = self.format_percent(self.get_ratio(self.p1.job, self.p1.total_games))
+        p2_job = self.format_percent(self.get_ratio(self.p2.job, self.p2.total_games))
+        bet_amount = self.format_very_small(self.get_amount(self.total.bet_amount))
+        lowest_amount = self.format_very_small2(self.get_amount(self.total.probability_wins_amount_lowest))
+        target_amount = self.format_very_small(self.get_amount(self.total.target_amount))
+        target_games = self.format_very_small2(self.total.target_games)
+        total_games = self.format_slightly_small(self.total.games)
+        total_p1_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p1_wins, self.total.games))
+        total_p1_wins_amount = self.format_very_small(self.get_amount_percent(self.total.p1_wins_amount))
+        total_p2_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p2_wins, self.total.games))
+        total_p2_wins_amount = self.format_very_small2(self.get_amount_percent(self.total.p2_wins_amount))
+        total_wl_games = self.format_slightly_small(self.total.wl_games)
+        total_wl_wins = self.format_percent_slightly_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
+        total_wl_wins_amount = self.format_very_small(self.get_amount_percent(self.total.wl_wins_amount))
+        total_wl_losses = self.format_percent_slightly_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
+        total_wl_losses_amount = self.format_very_small2(self.get_amount_percent(self.total.wl_losses_amount))
+        total_probability_games = self.format_slightly_small(self.total.probability_games)
+        total_probability_wins = self.format_percent_slightly_small(self.get_ratio(self.total.probability_wins, self.total.probability_games))
+        total_probability_wins_amount = self.format_very_small(self.get_amount_percent(self.total.probability_wins_amount))
+        total_probability_losses = self.format_percent_slightly_small(self.get_ratio(self.total.probability_losses, self.total.probability_games))
+        total_probability_losses_amount = self.format_very_small2(self.get_amount_percent(self.total.probability_losses_amount))
+        bet_player = self.format_very_small(self.get_bet_palyer())
+        bet_probability = self.format_percent_very_small2(self.get_bet_probability())
+        bet_p1_matches = self.format_very_small(self.get_bet_matches(self.p1))
+        bet_p2_matches = self.format_very_small2(self.get_bet_matches(self.p2))
 
-        return f"""
-            |-----------------------------------------------------------------------------------|
-            | {mode} | {tier} | {left} |
-            |-----------------------------------------------------------------------------------|
-            | Name            | {p1_name} | {p2_name} |
-            |-----------------------------------------------------------------------------------|
-            | Direct wins     | {p1_direct_wins} | {p2_direct_wins} | 
-            | Direct wl ratio | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
-            | Direct amount   | {p1_direct_amount} | {p2_direct_amount} |
-            | Direct odds     | {p1_direct_odds} | {p2_direct_odds} |
-            |-----------------------------------------------------------------------------------|
-            | Total wins      | {p1_total_wins} | {p2_total_wins} |
-            | Total losses    | {p1_total_losses} | {p2_total_losses} |
-            | Total wl ratio  | {p1_total_wl_ratio} | {p2_total_wl_ratio} |
-            | Wl probability  | {p1_total_wl_probability} | {p2_total_wl_probability} |
-            | Streak          | {p1_streak} | {p2_streak} |
-            |-----------------------------------------------------------------------------------|
-            | Skill           | {p1_skill} | {p2_skill} |
-            | Confidence      | {p1_confidence} | {p2_confidence} |
-            | Probability     | {p1_probability} | {p2_probability} |
-            |-----------------------------------------------------------------------------------|
-            | Upset           | {p1_upset} | {p2_upset} |
-            | Job             | {p1_job} | {p2_job} |
-            |-----------------------------------------------------------------------------------|
-            | Total           | {total_games} | {total_p1_wins} | {total_p2_wins} |
-            | Winrate wins    | {total_wl_games} | {total_wl_wins_games} | {total_wl_wins} | {total_wl_wins_odds} | {total_wl_wins_amount} |
-            | Winrate losses  | {total_wl_games} | {total_wl_losses_games} | {total_wl_losses} | {total_wl_losses_odds} | {total_wl_losses_amount} |
-            | Prob. wins      | {total_probability_games} | {total_probability_wins_games} | {total_probability_wins} | {total_probability_wins_odds} | {total_probability_wins_amount} |
-            | Prob. losses    | {total_probability_games} | {total_probability_losses_games} | {total_probability_losses} | {total_probability_losses_odds} | {total_probability_losses_amount} |
-            |-----------------------------------------------------------------------------------|
+        text = ''
+
+        if self.mode is not None or self.tier is not None or self.left is not None:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | {mode} | {tier} | {left} |"""
+
+        if self.p1.name is not None or self.p2.name is not None:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Name                | {p1_name} | {p2_name} |"""
+
+        if self.p1.total_games > 0 or self.p2.total_games > 0:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Direct wins         | {p1_direct_wins} | {p2_direct_wins} | 
+            | Direct winrate      | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
+            | Direct probability  | {p1_direct_wl_probability} | {p2_direct_wl_probability} |
+            | Direct amount       | {p1_direct_amount} | {p2_direct_amount} |
+            | Direct odds         | {p1_direct_odds} | {p2_direct_odds} |
+            |---------------------------------------------------------------------------------------|
+            | Total wins          | {p1_total_wins} | {p2_total_wins} |
+            | Total losses        | {p1_total_losses} | {p2_total_losses} |
+            | Total winrate       | {p1_total_wl_ratio} | {p2_total_wl_ratio} |
+            | Winrate probability | {p1_total_wl_probability} | {p2_total_wl_probability} |
+            | Streak              | {p1_streak} | {p2_streak} |
+            |---------------------------------------------------------------------------------------|
+            | Skill               | {p1_skill} | {p2_skill} |
+            | Skill confidence    | {p1_confidence} | {p2_confidence} |
+            | Skill probability   | {p1_probability} | {p2_probability} |
+            |---------------------------------------------------------------------------------------|
+            | Upset               | {p1_upset} | {p2_upset} |
+            | Job                 | {p1_job} | {p2_job} |"""
+
+        text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} | 
+            | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
+            | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
+            | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |"""
+
+        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Bet  !!! DIRECT !!! | {bet_player} | {bet_probability} | {bet_p1_matches} | {bet_p2_matches} |"""
+        elif self.p1.total_games > 0 or self.p2.total_games > 0:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Bet                 | {bet_player} | {bet_probability} | {bet_p1_matches} | {bet_p2_matches} |"""
+
+
+        text += f"""
+            |---------------------------------------------------------------------------------------|
         """
+
+        return text
 
     def get_direct_wins(self, direct):
         return direct.wins if direct.total > 0 else None
@@ -148,6 +177,14 @@ class Stats:
         denom = math.sqrt(2 * (trueskill.BETA * trueskill.BETA) + sum_sigma)
         return trueskill.global_env().cdf(delta_mu / denom)
 
+    def get_direct_wl_probability(self, p1_direct, p2_direct):
+        if p1_direct.total == 0 and p2_direct.total == 0:
+            return None
+
+        p1_wl = p1_direct.wins / p1_direct.total if p1_direct.total != 0 else 0.5
+        p2_wl = p2_direct.wins / p2_direct.total if p2_direct.total != 0 else 0.5
+        return p1_wl / (p1_wl + p2_wl) if p1_wl != 0.0 or p2_wl != 0.0 else 0.5
+
     def get_wl_probability(self, p1, p2):
         if p1.total_games == 0 and p2.total_games == 0:
             return None
@@ -163,13 +200,19 @@ class Stats:
             return f'{value:<{width}}'
 
     def format_mode(self, mode):
-        return self.format(value=str(mode).title(), width=15)
+        return self.format(value=str(mode).title(), width=19)
 
     def format_small(self, value):
         return self.format(value=value, width=19)
 
-    def format_very_small(self, value):
+    def format_slightly_small(self, value):
         return self.format(value=value, width=8)
+
+    def format_very_small(self, value):
+        return self.format(value=value, width=14)
+
+    def format_very_small2(self, value):
+        return self.format(value=value, width=13)
 
     def format_tier(self, tier):
         if tier is None:
@@ -211,20 +254,20 @@ class Stats:
         max = skill.mu + 2 * skill.sigma
         return f'{skill.mu:.2f} ({min:.2f} - {max:.2f})'
 
-    def format_probability(self, probability):
-        if probability is None:
+    def format_percent(self, percent):
+        if percent is None:
             return self.format(None)
-        return self.format(value=f'{probability:.2%}')
+        return self.format(value=f'{percent:.2%}')
 
-    def format_probability_small(self, probability):
+    def format_percent_very_small2(self, probability):
         if probability is None:
-            return self.format_small(None)
-        return self.format_small(value=f'{probability:.2%}')
+            return self.format_very_small2(None)
+        return self.format_very_small2(value=f'{probability:.2%}')
 
-    def format_probability_very_small(self, probability):
+    def format_percent_slightly_small(self, probability):
         if probability is None:
-            return self.format_very_small(None)
-        return self.format_very_small(value=f'{probability:.2%}')
+            return self.format_slightly_small(None)
+        return self.format_slightly_small(value=f'{probability:.2%}')
 
     def get_odds(self, odds, games):
         if games == 0:
@@ -244,3 +287,43 @@ class Stats:
             index += 1
 
         return prefix + amount_to
+
+    def get_amount_percent(self, amount):
+        prefix = '+' if amount > 0 else '-'
+        return prefix + str(abs(round(amount / self.total.bet_amount))) + '%'
+
+    def get_bet_direct(self):
+        p1_direct_wins = self.get_direct_wins(self.p1_direct)
+        p2_direct_wins = self.get_direct_wins(self.p2_direct)
+        if p1_direct_wins is None and p2_direct_wins is None:
+            return None
+        if p2_direct_wins is None or p1_direct_wins > p2_direct_wins:
+            return 'RED'
+        if p1_direct_wins is None or p2_direct_wins > p1_direct_wins:
+            return 'BLUE'
+        return None
+
+    def get_bet_palyer(self):
+        bet_probability = self.get_bet_probability()
+        if bet_probability is None or bet_probability == 0.5:
+            return None
+        return 'P1 (RED)' if bet_probability > 0.5 else 'P2 (BLUE)'
+
+    def get_bet_probability(self):
+        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
+            return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
+        else:
+            return self.get_probability(self.p1.skill, self.p2.skill)
+
+    def get_bet_winrate(self):
+        winrate_probability = self.get_wl_probability(self.p1, self.p2)
+        if winrate_probability is None or winrate_probability == 0.5:
+            return None
+        return 'RED' if winrate_probability > 0.5 else 'BLUE'
+
+    def get_bet_matches(self, player):
+        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
+            direct = self.p1_direct if player.name == self.p1.name else self.p2_direct
+            return f'{direct.wins} - {direct.losses} ({direct.total})'
+        else:
+            return f'{player.total_wins} - {player.total_losses} ({player.total_games})'

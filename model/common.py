@@ -22,12 +22,12 @@ class Common:
         p1.add_log(log)
         p2.add_log(log)
 
-        winner, loser = (p1, p2) if log.winner == log.p1_name else (p2, p1)
-
-        self.total.add_log(log, winner, loser)
+        self.total.add_log(log, p1, p2)
 
         p1.streak = log.p1_streak
         p2.streak = log.p2_streak
+
+        winner, loser = (p1, p2) if log.winner == log.p1_name else (p2, p1)
 
         winner.total_games += 1
         winner.total_wins += 1
