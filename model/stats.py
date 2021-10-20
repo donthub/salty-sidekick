@@ -311,9 +311,13 @@ class Stats:
 
     def get_bet_probability(self):
         if self.p1_direct.total > 0 or self.p2_direct.total > 0:
-            return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
+            p1_probability = self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
+            p2_probability = self.get_direct_wl_probability(self.p2_direct, self.p1_direct)
+            return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
         else:
-            return self.get_probability(self.p1.skill, self.p2.skill)
+            p1_probability = self.get_probability(self.p1.skill, self.p2.skill)
+            p2_probability = self.get_probability(self.p2.skill, self.p1.skill)
+            return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
 
     def get_bet_winrate(self):
         winrate_probability = self.get_wl_probability(self.p1, self.p2)
