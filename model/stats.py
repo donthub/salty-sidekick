@@ -52,12 +52,24 @@ class Stats:
         total_games = self.format_small(self.total.games)
         total_p1_wins = self.format_probability_small(self.get_ratio(self.total.p1_wins, self.total.games))
         total_p2_wins = self.format_probability_small(self.get_ratio(self.total.p2_wins, self.total.games))
-        total_wl_games = self.format_small(self.total.wl_games)
-        total_wl_wins = self.format_probability_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
-        total_wl_losses = self.format_probability_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
-        total_probability_games = self.format_small(self.total.probability_games)
-        total_probability_wins = self.format_probability_small(self.get_ratio(self.total.probability_wins, self.total.probability_games))
-        total_probability_losses = self.format_probability_small(self.get_ratio(self.total.probability_losses, self.total.probability_games))
+        total_wl_games = self.format_very_small(self.total.wl_games)
+        total_wl_wins_games = self.format_very_small(self.total.wl_wins)
+        total_wl_wins = self.format_probability_very_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
+        total_wl_wins_odds = self.format_very_small(self.get_odds(self.total.wl_wins_odds, self.total.wl_wins))
+        total_wl_wins_amount = self.format_small(self.get_amount(self.total.wl_wins_amount))
+        total_wl_losses = self.format_probability_very_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
+        total_wl_losses_games = self.format_very_small(self.total.wl_losses)
+        total_wl_losses_odds = self.format_very_small(self.get_odds(self.total.wl_losses_odds, self.total.wl_losses))
+        total_wl_losses_amount = self.format_small(self.get_amount(self.total.wl_losses_amount))
+        total_probability_games = self.format_very_small(self.total.probability_games)
+        total_probability_wins = self.format_probability_very_small(self.get_ratio(self.total.probability_wins, self.total.probability_games))
+        total_probability_wins_games = self.format_very_small(self.total.probability_wins)
+        total_probability_wins_odds = self.format_very_small(self.get_odds(self.total.probability_wins_odds, self.total.probability_wins))
+        total_probability_wins_amount = self.format_small(self.get_amount(self.total.probability_wins_amount))
+        total_probability_losses = self.format_probability_very_small(self.get_ratio(self.total.probability_losses, self.total.probability_games))
+        total_probability_losses_games = self.format_very_small(self.total.probability_losses)
+        total_probability_losses_odds = self.format_very_small(self.get_odds(self.total.probability_losses_odds, self.total.probability_losses))
+        total_probability_losses_amount = self.format_small(self.get_amount(self.total.probability_losses_amount))
 
         return f"""
             |-----------------------------------------------------------------------------------|
@@ -84,8 +96,10 @@ class Stats:
             | Job             | {p1_job} | {p2_job} |
             |-----------------------------------------------------------------------------------|
             | Total           | {total_games} | {total_p1_wins} | {total_p2_wins} |
-            | Winrate         | {total_wl_games} | {total_wl_wins} | {total_wl_losses} |
-            | Probability     | {total_probability_games} | {total_probability_wins} | {total_probability_losses} |
+            | Winrate wins    | {total_wl_games} | {total_wl_wins_games} | {total_wl_wins} | {total_wl_wins_odds} | {total_wl_wins_amount} |
+            | Winrate losses  | {total_wl_games} | {total_wl_losses_games} | {total_wl_losses} | {total_wl_losses_odds} | {total_wl_losses_amount} |
+            | Prob. wins      | {total_probability_games} | {total_probability_wins_games} | {total_probability_wins} | {total_probability_wins_odds} | {total_probability_wins_amount} |
+            | Prob. losses    | {total_probability_games} | {total_probability_losses_games} | {total_probability_losses} | {total_probability_losses_odds} | {total_probability_losses_amount} |
             |-----------------------------------------------------------------------------------|
         """
 
@@ -154,6 +168,9 @@ class Stats:
     def format_small(self, value):
         return self.format(value=value, width=19)
 
+    def format_very_small(self, value):
+        return self.format(value=value, width=8)
+
     def format_tier(self, tier):
         if tier is None:
             tier = '?'
@@ -203,3 +220,27 @@ class Stats:
         if probability is None:
             return self.format_small(None)
         return self.format_small(value=f'{probability:.2%}')
+
+    def format_probability_very_small(self, probability):
+        if probability is None:
+            return self.format_very_small(None)
+        return self.format_very_small(value=f'{probability:.2%}')
+
+    def get_odds(self, odds, games):
+        if games == 0:
+            return None
+        return round(odds / games, 2)
+
+    def get_amount(self, amount):
+        prefix = '+' if amount > 0 else '-'
+        amount_from = str(abs(round(amount)))
+        amount_to = ''
+
+        index = 0
+        for character in amount_from:
+            amount_to += character
+            if (len(amount_from) - index - 1) % 3 == 0 and index != len(amount_from) - 1:
+                amount_to += ','
+            index += 1
+
+        return prefix + amount_to
