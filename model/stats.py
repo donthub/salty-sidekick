@@ -304,20 +304,31 @@ class Stats:
         return None
 
     def get_bet_palyer(self):
-        bet_probability = self.get_bet_probability()
-        if bet_probability is None or bet_probability == 0.5:
+        p1_probability = self.get_bet_probability_player(self.p1)
+        p2_probability = self.get_bet_probability_player(self.p2)
+        if p1_probability is not None and p1_probability > 0.5:
+            return 'P1 (RED)'
+        elif p2_probability is not None and p2_probability > 0.5:
+            return 'P2 (BLUE)'
+        else:
             return None
-        return 'P1 (RED)' if bet_probability > 0.5 else 'P2 (BLUE)'
 
     def get_bet_probability(self):
+        p1_probability = self.get_bet_probability_player(self.p1)
+        p2_probability = self.get_bet_probability_player(self.p2)
+        return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
+
+    def get_bet_probability_player(self, player):
         if self.p1_direct.total > 0 or self.p2_direct.total > 0:
-            p1_probability = self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
-            p2_probability = self.get_direct_wl_probability(self.p2_direct, self.p1_direct)
-            return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
+            if player.name == self.p1.name:
+                return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
+            else:
+                return self.get_direct_wl_probability(self.p2_direct, self.p1_direct)
         else:
-            p1_probability = self.get_probability(self.p1.skill, self.p2.skill)
-            p2_probability = self.get_probability(self.p2.skill, self.p1.skill)
-            return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
+            if player.name == self.p1.name:
+                return self.get_probability(self.p1.skill, self.p2.skill)
+            else:
+                return self.get_probability(self.p2.skill, self.p1.skill)
 
     def get_bet_winrate(self):
         winrate_probability = self.get_wl_probability(self.p1, self.p2)
