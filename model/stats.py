@@ -5,13 +5,14 @@ import trueskill
 
 class Stats:
 
-    def __init__(self, p1, p2, total, tier, mode, left):
+    def __init__(self, p1, p2, total, tier, mode, left, stats_enabled=False):
         self.p1 = p1
         self.p2 = p2
         self.total = total
         self.tier = tier
         self.mode = mode
         self.left = left
+        self.stats_enabled = stats_enabled
         self.p1_direct = self.p1.get_direct(p2.name)
         self.p2_direct = self.p2.get_direct(p1.name)
 
@@ -111,8 +112,10 @@ class Stats:
             | Upset               | {p1_upset} | {p2_upset} |
             | Job                 | {p1_job} | {p2_job} |"""
 
-        text += f"""
-            |---------------------------------------------------------------------------------------| 
+        if self.stats_enabled:
+            text += f"""
+            |---------------------------------------------------------------------------------------|
+            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} | 
             | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
             | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
             | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |"""
@@ -124,10 +127,9 @@ class Stats:
             | {column} | {bet_p1_name} | {bet_p2_name} |
             | Bet chance          | {bet_p1_probability} | {bet_p1_matches} | {bet_p2_probability} | {bet_p2_matches} |"""
 
-
-        text += f"""
-            |---------------------------------------------------------------------------------------|
-        """
+        if text != '':
+            text += f"""
+            |---------------------------------------------------------------------------------------|"""
 
         return text
 
