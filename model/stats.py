@@ -70,9 +70,11 @@ class Stats:
         total_probability_wins_amount = self.format_very_small(self.get_amount_percent(self.total.probability_wins_amount))
         total_probability_losses = self.format_percent_slightly_small(self.get_ratio(self.total.probability_losses, self.total.probability_games))
         total_probability_losses_amount = self.format_very_small2(self.get_amount_percent(self.total.probability_losses_amount))
-        bet_player = self.format_very_small(self.get_bet_palyer())
-        bet_probability = self.format_percent_very_small2(self.get_bet_probability())
-        bet_p1_matches = self.format_very_small(self.get_bet_matches(self.p1))
+        bet_p1_name = self.format(self.get_bet_player_name(self.p1))
+        bet_p2_name = self.format(self.get_bet_player_name(self.p2))
+        bet_p1_probability = self.format_percent_very_small(self.get_bet_probability_player(self.p1))
+        bet_p1_matches = self.format_very_small2(self.get_bet_matches(self.p1))
+        bet_p2_probability = self.format_percent_very_small(self.get_bet_probability_player(self.p2))
         bet_p2_matches = self.format_very_small2(self.get_bet_matches(self.p2))
 
         text = ''
@@ -110,20 +112,17 @@ class Stats:
             | Job                 | {p1_job} | {p2_job} |"""
 
         text += f"""
-            |---------------------------------------------------------------------------------------|
-            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} | 
+            |---------------------------------------------------------------------------------------| 
             | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
             | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
             | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |"""
 
-        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
+        if self.p1.total_games > 0 or self.p2.total_games > 0:
+            column = 'Bet  !!! DIRECT !!!' if self.p1_direct.total > 0 or self.p2_direct.total > 0 else 'Bet character      '
             text += f"""
             |---------------------------------------------------------------------------------------|
-            | Bet  !!! DIRECT !!! | {bet_player} | {bet_probability} | {bet_p1_matches} | {bet_p2_matches} |"""
-        elif self.p1.total_games > 0 or self.p2.total_games > 0:
-            text += f"""
-            |---------------------------------------------------------------------------------------|
-            | Bet                 | {bet_player} | {bet_probability} | {bet_p1_matches} | {bet_p2_matches} |"""
+            | {column} | {bet_p1_name} | {bet_p2_name} |
+            | Bet chance          | {bet_p1_probability} | {bet_p1_matches} | {bet_p2_probability} | {bet_p2_matches} |"""
 
 
         text += f"""
@@ -259,10 +258,10 @@ class Stats:
             return self.format(None)
         return self.format(value=f'{percent:.2%}')
 
-    def format_percent_very_small2(self, probability):
+    def format_percent_very_small(self, probability):
         if probability is None:
-            return self.format_very_small2(None)
-        return self.format_very_small2(value=f'{probability:.2%}')
+            return self.format_very_small(None)
+        return self.format_very_small(value=f'{probability:.2%}')
 
     def format_percent_slightly_small(self, probability):
         if probability is None:
@@ -303,20 +302,14 @@ class Stats:
             return 'BLUE'
         return None
 
-    def get_bet_palyer(self):
+    def get_bet_player_name(self, player):
         p1_probability = self.get_bet_probability_player(self.p1)
         p2_probability = self.get_bet_probability_player(self.p2)
-        if p1_probability is not None and p1_probability > 0.5:
-            return 'P1 (RED)'
-        elif p2_probability is not None and p2_probability > 0.5:
-            return 'P2 (BLUE)'
-        else:
-            return None
-
-    def get_bet_probability(self):
-        p1_probability = self.get_bet_probability_player(self.p1)
-        p2_probability = self.get_bet_probability_player(self.p2)
-        return p1_probability if p1_probability is not None and p1_probability > 0.5 else p2_probability
+        if p1_probability is not None and p1_probability > 0.5 and player == self.p1:
+            return self.p1.name
+        if p2_probability is not None and p2_probability > 0.5 and player == self.p2:
+            return self.p2.name
+        return None
 
     def get_bet_probability_player(self, player):
         if self.p1_direct.total > 0 or self.p2_direct.total > 0:
