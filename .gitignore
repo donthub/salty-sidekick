@@ -9,4 +9,6 @@ Salty.egg-info
 # Application
 logs/
 config.json
+chromedriver.exe
+chromedriver
 database.db

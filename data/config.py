@@ -9,9 +9,13 @@ class Config:
     def __init__(self, path='config.json', sample_path='config_sample.json'):
         self.path = path
         self.sample_path = sample_path
-        self.auth = self.get_auth()
 
-    def get_auth(self):
+        self.auth = None
+        self.bet = False
+        self.amount = 0
+        self.init()
+
+    def init(self):
         if not os.path.isfile(self.path):
             if os.path.isfile(self.sample_path):
                 shutil.copyfile(self.sample_path, self.path)
@@ -23,6 +27,13 @@ class Config:
         with open(self.path, 'r', encoding='utf-8') as file:
             config = json.load(file)
 
+        self.auth = self.get_auth(config)
+
+        self.bet = 'bet' in config and config['bet']
+        if self.bet and 'amount' in config:
+            self.amount = int(config['amount'])
+
+    def get_auth(self, config):
         username = self.strip(config['username'])
         oauth_token = self.strip(config['oauth_token'])
         if len(username) == 0 or self.is_invalid_token(oauth_token):

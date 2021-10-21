@@ -5,9 +5,10 @@ from model.log import Log
 
 class Collector:
 
-    def __init__(self, database, model):
+    def __init__(self, database, model, better):
         self.database = database
         self.model = model
+        self.better = better
         self.state = None
 
         self.p1_name = None
@@ -36,6 +37,7 @@ class Collector:
 
         stats = self.model.get_stats(p1_name, p2_name, tier, mode, left)
         logging.info(stats.to_text())
+        self.better.bet(stats)
 
     def lock_match(self, p1_streak, p1_amount, p2_streak, p2_amount):
         logging.info(

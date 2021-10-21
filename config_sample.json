@@ -1,4 +1,6 @@
 {
   "username": "",
-  "oauth_token": ""
+  "oauth_token": "",
+  "bet": true,
+  "amount": 1000
 }
