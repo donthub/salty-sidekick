@@ -32,10 +32,6 @@ class Better:
         else:
             self.driver = webdriver.Chrome()
 
-        logging.warning(
-            'ChromeDriver was not found! Please either make it available in the project root, or set "bet" to "false" in config.json!')
-        exit(-1)
-
     def log_in(self):
         self.driver.get('https://www.saltybet.com/authenticate?signin=1')
         wait = WebDriverWait(self.driver, 300)
