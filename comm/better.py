@@ -4,7 +4,8 @@ import random
 import time
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, \
+    ElementNotInteractableException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -56,7 +57,7 @@ class Better:
                 self.bet_p1()
             elif p2_probability is not None and p2_probability > 0.5:
                 self.bet_p2()
-        except (NoSuchElementException, StaleElementReferenceException):
+        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
             logging.warning('Error occurred while trying to bet!')
 
     def bet_p1(self):
