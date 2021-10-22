@@ -47,7 +47,11 @@ class Better:
         return driver.execute_script('return document.readyState') == 'complete'
 
     def bet(self, stats):
-        time.sleep(random.randint(5, 15))
+        if stats.mode == 'EXHIBITION':
+            return
+
+        time.sleep(random.randint(5, 10))
+
         p1_probability = stats.get_bet_probability_player(stats.p1)
         p2_probability = stats.get_bet_probability_player(stats.p2)
 
