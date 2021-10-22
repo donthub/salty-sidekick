@@ -1,6 +1,6 @@
 # Description
 
-Collects and displays SaltyBet match information.
+Collects and displays SaltyBet match information, with optional betting.
 
 # Pre-requisites
 ## General
@@ -16,12 +16,15 @@ Python version `3.9` or greater.
 
 ## Betting
 
-For automatic betting to be enabled, Chrome is required, as well as the ChromeDriver executable in the root path.
+For automatic betting to be enabled, Chrome/Chromium is required, as well as the ChromeDriver executable:
+
+* Windows: In project root, or via PATH
+* Linux: Via PATH
 
 `config.json`:
 
 * `bet`: `true` to enable automatic betting, `false` otherwise
-* `amount`: Automatic betting amount.
+* `amount`: Automatic betting amount for matchmaking. Tournaments are all in, exhibitions are ignored.
 
 # Usage
 

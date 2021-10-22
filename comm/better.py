@@ -27,13 +27,10 @@ class Better:
         # self.remove_unused()
 
     def init_driver(self):
-        if os.path.exists('chromedriver'):
-            self.driver = webdriver.Chrome(executable_path='chromedriver')
-            return
-
         if os.path.exists('chromedriver.exe'):
             self.driver = webdriver.Chrome(executable_path='chromedriver.exe')
-            return
+        else:
+            self.driver = webdriver.Chrome()
 
         logging.warning(
             'ChromeDriver was not found! Please either make it available in the project root, or set "bet" to "false" in config.json!')
