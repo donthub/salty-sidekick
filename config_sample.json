@@ -2,5 +2,6 @@
   "username": "",
   "oauth_token": "",
   "bet": true,
-  "amount": 1000
+  "amount": 1000,
+  "min_balance": 0
 }

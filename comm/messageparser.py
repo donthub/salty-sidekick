@@ -1,6 +1,8 @@
 import logging
 import re
 
+from util.mode import Mode
+
 
 class MessageParser:
     class MessageFound(Exception):
@@ -27,9 +29,9 @@ class MessageParser:
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) {2}\(matchmaking\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Matchmaking players')
+            # logging.info('--- Matchmaking players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
-                                       mode='MATCHMAKING', left=self.left)
+                                       mode=Mode.MATCHMAKING, left=self.left)
             # Matchmaking players
             # Bets are OPEN for Gene vs Sannomiya_shiho! (S Tier)  (matchmaking) www.saltybet.com
             raise self.MessageFound()
@@ -38,9 +40,9 @@ class MessageParser:
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) {2}tournament bracket: http://www\.saltybet\.com/shaker\?bracket=1$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Tournament players')
+            # logging.info('--- Tournament players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
-                                       mode='TOURNAMENT', left=self.left)
+                                       mode=Mode.TOURNAMENT, left=self.left)
             # Tournament players
             # Bets are OPEN for Reimu hm vs Akane ex! (S Tier)  tournament bracket: http://www.saltybet.com/shaker?bracket=1
             raise self.MessageFound()
@@ -54,8 +56,8 @@ class MessageParser:
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Exhibition players')
-            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=None, mode='EXHIBITION',
+            # logging.info('--- Exhibition players')
+            self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=None, mode=Mode.EXHIBITION,
                                        left=self.left)
             # Exhibition players
             # Bets are OPEN for Carriage driver vs Servant emiya! (Requested by Alipheese)  (exhibitions) www.saltybet.com
@@ -65,9 +67,9 @@ class MessageParser:
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((.) Tier\) \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Exhibition players')
+            # logging.info('--- Exhibition players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
-                                       mode='EXHIBITION', left=self.left)
+                                       mode=Mode.EXHIBITION, left=self.left)
             # Exhibition players
             # Bets are OPEN for Prismatic jam vs Robert garcia EX2! (S Tier) (Requested by Issacookieson) (exhibitions) www.saltybet.com
             raise self.MessageFound()
@@ -76,9 +78,9 @@ class MessageParser:
         pattern = r'^Bets are OPEN for (.+) vs (.+)! \((. \/ .) Tier\) \(Requested by (.+)\) {2}\(exhibitions\) www\.saltybet\.com$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Exhibition players')
+            # logging.info('--- Exhibition players')
             self.collector.start_match(p1_name=match.group(1), p2_name=match.group(2), tier=match.group(3),
-                                       mode='EXHIBITION', left=self.left)
+                                       mode=Mode.EXHIBITION, left=self.left)
             # Exhibition players
             # Bets are OPEN for Team BigWhores vs Team WhoresBig! (S / S Tier) (Requested by hopexdxcruz) (exhibitions) www.saltybet.com
             raise self.MessageFound()
@@ -91,7 +93,7 @@ class MessageParser:
         pattern = r'^Bets are locked\. (.+) \((.+)\) - \$(.+), (.+) \((.+)\) - \$(.+)$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Locked')
+            # logging.info('--- Locked')
             self.collector.lock_match(p1_streak=match.group(2), p1_amount=match.group(3), p2_streak=match.group(5),
                                       p2_amount=match.group(6))
             # Matchmaking locked
@@ -102,7 +104,7 @@ class MessageParser:
         pattern = r'^Bets are locked\. (.+)- \$(.+), (.+)- \$(.+)$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Exhibition locked')
+            # logging.info('--- Exhibition locked')
             self.collector.lock_match(p1_streak=0, p1_amount=match.group(2), p2_streak=0, p2_amount=match.group(4))
             # Exhibition locked
             # Bets are locked. Carriage driver- $1,480,823, Servant emiya- $3,008,605
@@ -112,7 +114,7 @@ class MessageParser:
         pattern = r'^(.+) wins! Payouts to Team (.+)\.(.*)$'
         match = re.compile(pattern).match(message)
         if match:
-            logging.info('--- Payout')
+            # logging.info('--- Payout')
             self.parse_left(message)
             self.collector.end_match(winner=match.group(1))
             # Matchmaking payout

@@ -5,7 +5,7 @@ import trueskill
 
 class Total:
 
-    def __init__(self, probability_threshold=0.0, games_threshold=10, bet_amount=100000, target_amount=8000000):
+    def __init__(self, probability_threshold=0.0, games_threshold=10, bet_amount=100000, target_amount=10000000):
         self.probability_threshold = probability_threshold
         self.games_threshold = games_threshold
         self.bet_amount = bet_amount

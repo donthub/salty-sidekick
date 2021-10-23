@@ -13,6 +13,7 @@ class Config:
         self.auth = None
         self.bet = False
         self.amount = 0
+        self.min_balance = 0
         self.init()
 
     def init(self):
@@ -30,8 +31,11 @@ class Config:
         self.auth = self.get_auth(config)
 
         self.bet = 'bet' in config and config['bet']
-        if self.bet and 'amount' in config:
-            self.amount = int(config['amount'])
+        if self.bet:
+            if 'amount' in config:
+                self.amount = int(config['amount'])
+            if 'min_balance' in config:
+                self.min_balance = int(config['min_balance'])
 
     def get_auth(self, config):
         username = self.strip(config['username'])

@@ -47,9 +47,6 @@ class Common:
             self.players[name][tier] = Player(name, tier)
         return self.players[name][tier]
 
-    def get_total(self):
-        return self.total
-
     def get_probability(self, p1_skill, p2_skill):
         delta_mu = p1_skill.mu - p2_skill.mu
         sum_sigma = p1_skill.sigma ** 2 + p2_skill.sigma ** 2
