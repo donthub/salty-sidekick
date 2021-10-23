@@ -127,6 +127,12 @@ class MessageParser:
             raise self.MessageFound()
 
     def parse_left(self, message):
+        pattern = r'^(.+) wins! Payouts to Team (.+)\. (\d+) characters are left in the bracket!$'
+        match = re.compile(pattern).match(message)
+        if match:
+            self.left = int(match.group(3)) - 1
+            return
+
         pattern = r'^(.+) wins! Payouts to Team (.+)\. (\d+)(.*)$'
         match = re.compile(pattern).match(message)
         if match:
