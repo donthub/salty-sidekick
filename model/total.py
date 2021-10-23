@@ -1,6 +1,4 @@
-import math
-
-import trueskill
+from util.util import Util
 
 
 class Total:
@@ -71,7 +69,7 @@ class Total:
                 self.wl_losses_amount += loser_odds * self.bet_amount
                 self.wl_wins_amount -= self.bet_amount
 
-        winner_probability = self.get_probability(winner.skill, loser.skill)
+        winner_probability = Util.get_probability(winner.skill, loser.skill)
         if self.is_above_threshold(winner_probability):
             self.probability_games += 1
             if winner_probability > 0.5:
@@ -86,7 +84,8 @@ class Total:
                 self.probability_losses_odds += loser_odds
                 self.probability_losses_amount += loser_odds * self.bet_amount
                 self.probability_wins_amount -= self.bet_amount
-                self.probability_wins_amount_lowest = min(self.probability_wins_amount_lowest, self.probability_wins_amount)
+                self.probability_wins_amount_lowest = min(self.probability_wins_amount_lowest,
+                                                          self.probability_wins_amount)
 
     def get_odds(self, log, player):
         p1_amount = int(log.p1_amount) + self.bet_amount if log.p1_name == player.name else int(log.p1_amount)
@@ -95,12 +94,6 @@ class Total:
         if log.p1_name == player.name:
             odds = 1 / odds
         return odds
-
-    def get_probability(self, p1_skill, p2_skill):
-        delta_mu = p1_skill.mu - p2_skill.mu
-        sum_sigma = p1_skill.sigma ** 2 + p2_skill.sigma ** 2
-        denom = math.sqrt(2 * (trueskill.BETA * trueskill.BETA) + sum_sigma)
-        return trueskill.global_env().cdf(delta_mu / denom)
 
     def is_above_threshold(self, probability):
         return round(abs(probability - (1 - probability)), 4) > self.probability_threshold

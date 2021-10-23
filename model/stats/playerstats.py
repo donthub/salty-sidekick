@@ -1,96 +1,7 @@
 import logging
-import math
 
-import trueskill
-
-
-class StatsBase:
-
-    def get_ratio(self, num, total):
-        if num is None or total is None or total == 0:
-            return None
-        else:
-            return num / total
-
-    def format(self, value, width=30):
-        if value is None:
-            return f"{'-':<{width}}"
-        else:
-            return f'{value:<{width}}'
-
-    def format_very_small(self, value):
-        return self.format(value=value, width=14)
-
-    def format_very_small2(self, value):
-        return self.format(value=value, width=13)
-
-
-class CommonStats(StatsBase):
-
-    def __init__(self, total):
-        self.total = total
-
-    def print(self):
-        logging.info(self.to_text())
-
-    def to_text(self):
-        bet_amount = self.format_very_small(self.get_amount(self.total.bet_amount))
-        lowest_amount = self.format_very_small2(self.get_amount(self.total.probability_wins_amount_lowest))
-        target_amount = self.format_very_small(self.get_amount(self.total.target_amount))
-        target_games = self.format_very_small2(self.total.target_games)
-        total_games = self.format_slightly_small(self.total.games)
-        total_p1_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p1_wins, self.total.games))
-        total_p1_wins_amount = self.format_very_small(self.get_amount_percent(self.total.p1_wins_amount))
-        total_p2_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p2_wins, self.total.games))
-        total_p2_wins_amount = self.format_very_small2(self.get_amount_percent(self.total.p2_wins_amount))
-        total_wl_games = self.format_slightly_small(self.total.wl_games)
-        total_wl_wins = self.format_percent_slightly_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
-        total_wl_wins_amount = self.format_very_small(self.get_amount_percent(self.total.wl_wins_amount))
-        total_wl_losses = self.format_percent_slightly_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
-        total_wl_losses_amount = self.format_very_small2(self.get_amount_percent(self.total.wl_losses_amount))
-        total_probability_games = self.format_slightly_small(self.total.probability_games)
-        total_probability_wins = self.format_percent_slightly_small(
-            self.get_ratio(self.total.probability_wins, self.total.probability_games))
-        total_probability_wins_amount = self.format_very_small(
-            self.get_amount_percent(self.total.probability_wins_amount))
-        total_probability_losses = self.format_percent_slightly_small(
-            self.get_ratio(self.total.probability_losses, self.total.probability_games))
-        total_probability_losses_amount = self.format_very_small2(
-            self.get_amount_percent(self.total.probability_losses_amount))
-
-        return f"""
-            |---------------------------------------------------------------------------------------|
-            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} | 
-            | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
-            | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
-            | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |
-            |---------------------------------------------------------------------------------------|"""
-
-    def get_amount(self, amount):
-        prefix = '+' if amount > 0 else '-'
-        amount_from = str(abs(round(amount)))
-        amount_to = ''
-
-        index = 0
-        for character in amount_from:
-            amount_to += character
-            if (len(amount_from) - index - 1) % 3 == 0 and index != len(amount_from) - 1:
-                amount_to += ','
-            index += 1
-
-        return prefix + amount_to
-
-    def format_slightly_small(self, value):
-        return self.format(value=value, width=8)
-
-    def format_percent_slightly_small(self, probability):
-        if probability is None:
-            return self.format_slightly_small(None)
-        return self.format_slightly_small(value=f'{probability:.2%}')
-
-    def get_amount_percent(self, amount):
-        prefix = '+' if amount > 0 else '-'
-        return prefix + str(abs(round(amount / self.total.bet_amount))) + '%'
+from model.stats.statsbase import StatsBase
+from util.util import Util
 
 
 class PlayerStats(StatsBase):
@@ -223,11 +134,7 @@ class PlayerStats(StatsBase):
     def get_probability(self, p1_skill, p2_skill):
         if self.p1.total_games == 0 and self.p2.total_games == 0:
             return None
-
-        delta_mu = p1_skill.mu - p2_skill.mu
-        sum_sigma = p1_skill.sigma ** 2 + p2_skill.sigma ** 2
-        denom = math.sqrt(2 * (trueskill.BETA * trueskill.BETA) + sum_sigma)
-        return trueskill.global_env().cdf(delta_mu / denom)
+        return Util.get_probability(p1_skill, p2_skill)
 
     def get_direct_wl_probability(self, p1_direct, p2_direct):
         if p1_direct.total == 0 and p2_direct.total == 0:

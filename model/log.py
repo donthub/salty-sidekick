@@ -1,4 +1,5 @@
 class Log:
+
     def __init__(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
         self.p1_name = p1_name
         self.p1_amount = p1_amount

@@ -1,4 +1,3 @@
-import logging
 import re
 
 from util.mode import Mode
