@@ -2,6 +2,7 @@
   "username": "",
   "oauth_token": "",
   "bet": true,
+  "simple_ui": false,
   "amount": 1000,
   "min_balance": 0
 }

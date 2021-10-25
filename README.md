@@ -14,7 +14,7 @@ Python version `3.9` or greater.
 
 `config.json`:
 
-* `username`: Twitch username
+* `username`: Twitch username.
 * `oauth_token`: OAuth token for Twitch username.
     * E.g.: https://twitchapps.com/tmi/
 
@@ -24,14 +24,15 @@ Python version `3.9` or greater.
 
 For automatic betting to be enabled, the following is required:
 
-* Chrome / Chromium installed
-* ChromeDriver executable
-    * Windows: In project root, or via PATH
-    * Linux: Via PATH
+* Chrome / Chromium installed.
+* ChromeDriver executable:
+    * Windows: In project root, or via PATH.
+    * Linux: Via PATH.
 
 `config.json`:
 
-* `bet`: `true` to enable automatic betting, `false` otherwise
+* `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
+* `bet`: `true` to enable automatic betting, `false` otherwise.
 * `amount`: Automatic betting amount for matchmaking. Tournaments are all in, exhibitions are ignored.
 * `min_balance`: If automatic betting would result in balance lower than this amount, betting will not be performed.
 

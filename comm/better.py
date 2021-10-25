@@ -18,6 +18,7 @@ class Better:
 
     def __init__(self, config):
         self.is_active = config.bet
+        self.simple_ui = config.simple_ui
         self.amount = config.amount
         self.min_balance = config.min_balance
 
@@ -29,7 +30,8 @@ class Better:
             return
         self.init_driver()
         self.log_in()
-        # self.remove_unused()
+        if self.simple_ui:
+            self.remove_unused()
 
     def init_driver(self):
         if os.path.exists('chromedriver.exe'):

@@ -10,6 +10,7 @@ class Config:
         self.path = path
         self.sample_path = sample_path
 
+        self.simple_ui = False
         self.auth = None
         self.bet = False
         self.amount = 0
@@ -32,6 +33,8 @@ class Config:
 
         self.bet = 'bet' in config and config['bet']
         if self.bet:
+            if 'simple_ui' in config:
+                self.simple_ui = config['simple_ui']
             if 'amount' in config:
                 self.amount = int(config['amount'])
             if 'min_balance' in config:
