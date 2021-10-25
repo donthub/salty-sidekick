@@ -6,7 +6,6 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, \
     ElementNotInteractableException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -24,7 +23,6 @@ class Better:
         self.min_balance = config.min_balance
 
         self.driver = None
-        self.wait = None
         self.init()
 
     def init(self):
@@ -40,20 +38,16 @@ class Better:
             self.driver = webdriver.Chrome(executable_path='chromedriver.exe')
         else:
             self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 300)
 
     def log_in(self):
         self.driver.get('https://www.saltybet.com/authenticate?signin=1')
-        self.wait.until(expected_conditions.url_to_be('https://www.saltybet.com/'))
-        self.wait.until(self.is_loaded)
+        wait = WebDriverWait(self.driver, 300)
+        wait.until(expected_conditions.url_to_be('https://www.saltybet.com/'))
+        wait.until(self.is_loaded)
 
     def remove_unused(self):
-        self.wait_for_and_remove('video-embed')
-        self.wait_for_and_remove('chat-frame-stream')
-
-    def wait_for_and_remove(self, id):
-        self.wait.until(expected_conditions.visibility_of_element_located((By.ID, id)))
-        self.driver.execute_script(f'document.getElementById("{id}").remove()')
+        self.driver.execute_script('document.getElementById("video-embed").remove()')
+        self.driver.execute_script('document.getElementById("chat-frame-stream").remove()')
 
     def is_loaded(self, driver):
         return driver.execute_script('return document.readyState') == 'complete'
