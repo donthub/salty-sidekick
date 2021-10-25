@@ -48,6 +48,7 @@ class Better:
     def remove_unused(self):
         self.driver.execute_script('document.getElementById("video-embed").remove()')
         self.driver.execute_script('document.getElementById("chat-frame-stream").remove()')
+        self.driver.execute_script('document.getElementById("sbettorswrapper").remove()')
 
     def is_loaded(self, driver):
         return driver.execute_script('return document.readyState') == 'complete'
