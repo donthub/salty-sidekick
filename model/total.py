@@ -9,6 +9,8 @@ class Total:
         self.bet_amount = bet_amount
         self.target_amount = target_amount
 
+        self.tier_games = {}
+        self.tier_characters = {}
         self.games = 0
         self.target_games = 0
         self.p1_wins = 0
@@ -36,6 +38,29 @@ class Total:
     def add_log(self, log, p1, p2):
         winner, loser = (p1, p2) if log.winner == log.p1_name else (p2, p1)
 
+        self.add_log_tier(log, p1, p2)
+        self.add_log_games(log, p1, p2)
+
+        if winner.total_games < self.games_threshold or loser.total_games < self.games_threshold:
+            return
+
+        winner_odds = self.get_odds(log, winner)
+        loser_odds = self.get_odds(log, loser)
+
+        self.add_log_wl(winner, loser, winner_odds, loser_odds)
+        self.add_log_probability(winner, loser, winner_odds, loser_odds)
+
+    def add_log_tier(self, log, p1, p2):
+        if log.tier not in self.tier_games:
+            self.tier_games[log.tier] = 0
+        if log.tier not in self.tier_characters:
+            self.tier_characters[log.tier] = set()
+
+        self.tier_games[log.tier] += 1
+        self.tier_characters[log.tier].add(p1.name)
+        self.tier_characters[log.tier].add(p2.name)
+
+    def add_log_games(self, log, p1, p2):
         self.games += 1
         if log.winner == log.p1_name:
             self.p1_wins += 1
@@ -46,12 +71,7 @@ class Total:
             self.p2_wins_amount += self.get_odds(log, p2) * self.bet_amount
             self.p1_wins_amount -= self.bet_amount
 
-        if winner.total_games < self.games_threshold or loser.total_games < self.games_threshold:
-            return
-
-        winner_odds = self.get_odds(log, winner)
-        loser_odds = self.get_odds(log, loser)
-
+    def add_log_wl(self, winner, loser, winner_odds, loser_odds):
         winner_wl = winner.total_wins / winner.total_games if winner.total_games != 0.0 else 0.5
         loser_wl = loser.total_wins / loser.total_games if loser.total_games != 0.0 else 0.5
 
@@ -69,6 +89,7 @@ class Total:
                 self.wl_losses_amount += loser_odds * self.bet_amount
                 self.wl_wins_amount -= self.bet_amount
 
+    def add_log_probability(self, winner, loser, winner_odds, loser_odds):
         winner_probability = Util.get_probability(winner.skill, loser.skill)
         if self.is_above_threshold(winner_probability):
             self.probability_games += 1

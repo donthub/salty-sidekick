@@ -16,6 +16,8 @@ class TotalStats(StatsBase):
         lowest_amount = self.format_very_small2(self.get_amount(self.total.probability_wins_amount_lowest))
         target_amount = self.format_very_small(self.get_amount(self.total.target_amount))
         target_games = self.format_very_small2(self.total.target_games)
+        tier_games = self.format_big(self.get_tier_games())
+        tier_characters = self.format_big(self.get_tier_characters())
         total_games = self.format_slightly_small(self.total.games)
         total_p1_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p1_wins, self.total.games))
         total_p1_wins_amount = self.format_very_small(self.get_amount_percent(self.total.p1_wins_amount))
@@ -38,7 +40,9 @@ class TotalStats(StatsBase):
 
         return f"""
             |---------------------------------------------------------------------------------------|
-            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} | 
+            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} |
+            | Tier games          | {tier_games} |
+            | Tier characters     | {tier_characters} |
             | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
             | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
             | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |
@@ -58,6 +62,9 @@ class TotalStats(StatsBase):
 
         return prefix + amount_to
 
+    def format_big(self, value):
+        return self.format(value=value, width=63)
+
     def format_slightly_small(self, value):
         return self.format(value=value, width=8)
 
@@ -69,3 +76,9 @@ class TotalStats(StatsBase):
     def get_amount_percent(self, amount):
         prefix = '+' if amount > 0 else '-'
         return prefix + str(abs(round(amount / self.total.bet_amount))) + '%'
+
+    def get_tier_games(self):
+        return ' | '.join(list(map(lambda item: self.format(value=f'{item[0]}: {item[1]}', width=10), self.total.tier_games.items())))
+
+    def get_tier_characters(self):
+        return ' | '.join(list(map(lambda item: self.format(value=f'{item[0]}: {len(item[1])}', width=10), self.total.tier_characters.items())))
