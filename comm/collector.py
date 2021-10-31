@@ -1,3 +1,4 @@
+import datetime as datetime
 import logging
 
 from model.log import Log
@@ -77,8 +78,9 @@ class Collector:
         self.p1_streak = self.get_player_streak(winner, self.p1_name, self.p1_streak)
         self.p2_streak = self.get_player_streak(winner, self.p2_name, self.p2_streak)
 
+        date_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log = Log(self.p1_name, self.p1_amount, self.p1_streak, self.p2_name, self.p2_amount, self.p2_streak, self.tier,
-                  self.winner, self.mode)
+                  self.winner, self.mode, date_time)
         self.database.add_log(log)
         self.model.add_log(log)
 

@@ -18,8 +18,18 @@ class Player:
         self.streak = 0
         self.upset = 0
         self.job = 0
+        self.date_time = None
 
     def add_log(self, log):
+        self.total_games += 1
+        self.streak = log.p1_streak if self.name == log.p1_name else log.p2_streak
+        self.date_time = log.datetime
+
+        if self.name == log.winner:
+            self.total_wins += 1
+        else:
+            self.total_losses += 1
+
         name = log.p1_name if self.name == log.p2_name else log.p2_name
         if name not in self.directs:
             self.directs[name] = Direct()

@@ -6,12 +6,14 @@ from util.util import Util
 
 class PlayerStats(StatsBase):
 
-    def __init__(self, p1, p2, tier, mode, left):
+    def __init__(self, p1, p2, tier, p1_tiers=None, p2_tiers=None, mode=None, left=None):
         self.p1 = p1
         self.p2 = p2
         self.tier = tier
         self.mode = mode
         self.left = left
+        self.p1_tiers = p1_tiers
+        self.p2_tiers = p2_tiers
         self.p1_direct = self.p1.get_direct(p2.name)
         self.p2_direct = self.p2.get_direct(p1.name)
 
@@ -24,6 +26,10 @@ class PlayerStats(StatsBase):
         left = self.format_left(self.left)
         p1_name = self.format(self.p1.name)
         p2_name = self.format(self.p2.name)
+        p1_tiers = self.format(self.get_tiers(self.p1_tiers))
+        p2_tiers = self.format(self.get_tiers(self.p2_tiers))
+        p1_date_time = self.format(self.p1.date_time)
+        p2_date_time = self.format(self.p2.date_time)
         p1_direct_wins = self.format(self.get_direct_wins(self.p1_direct))
         p2_direct_wins = self.format(self.get_direct_wins(self.p2_direct))
         p1_direct_wl_ratio = self.format_percent(self.get_ratio(self.p1_direct.wins, self.p1_direct.total))
@@ -70,6 +76,9 @@ class PlayerStats(StatsBase):
         if self.p1.total_games > 0 or self.p2.total_games > 0:
             text += f"""
             |---------------------------------------------------------------------------------------|
+            | Last seen           | {p1_date_time} | {p2_date_time} |
+            | Other tiers         | {p1_tiers} | {p2_tiers} |
+            |---------------------------------------------------------------------------------------|
             | Direct wins         | {p1_direct_wins} | {p2_direct_wins} | 
             | Direct winrate      | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
             | Direct probability  | {p1_direct_wl_probability} | {p2_direct_wl_probability} |
@@ -100,6 +109,10 @@ class PlayerStats(StatsBase):
             |---------------------------------------------------------------------------------------|"""
 
         return text
+
+    def get_tiers(self, tiers):
+        tiers_text = ', '.join(list(filter(lambda tier: tier != self.tier, tiers)))
+        return tiers_text if len(tiers_text) > 0 else None
 
     def get_direct_wins(self, direct):
         return direct.wins if direct.total > 0 else None
@@ -139,7 +152,6 @@ class PlayerStats(StatsBase):
     def get_direct_wl_probability(self, p1_direct, p2_direct):
         if p1_direct.total == 0 and p2_direct.total == 0:
             return None
-
         p1_wl = p1_direct.wins / p1_direct.total if p1_direct.total != 0 else 0.5
         p2_wl = p2_direct.wins / p2_direct.total if p2_direct.total != 0 else 0.5
         return p1_wl / (p1_wl + p2_wl) if p1_wl != 0.0 or p2_wl != 0.0 else 0.5
@@ -147,7 +159,6 @@ class PlayerStats(StatsBase):
     def get_wl_probability(self, p1, p2):
         if p1.total_games == 0 and p2.total_games == 0:
             return None
-
         p1_wl = p1.total_wins / p1.total_games if p1.total_games != 0 else 0.5
         p2_wl = p2.total_wins / p2.total_games if p2.total_games != 0 else 0.5
         return p1_wl / (p1_wl + p2_wl) if p1_wl != 0.0 or p2_wl != 0.0 else 0.5
@@ -235,16 +246,32 @@ class PlayerStats(StatsBase):
         return None
 
     def get_bet_probability_player(self, player):
-        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
-            if player.name == self.p1.name:
-                return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
-            else:
-                return self.get_direct_wl_probability(self.p2_direct, self.p1_direct)
+        probability = self.get_direct_wl_probability_player(player)
+        if probability == 0.5:
+            probability = self.get_probability_player(player)
+        if probability == 0.5:
+            probability = self.get_wl_probability_player(player)
+        return probability
+
+    def get_direct_wl_probability_player(self, player):
+        if self.p1_direct.total == 0 and self.p2_direct.total == 0:
+            return 0.5
+        if player.name == self.p1.name:
+            return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
         else:
-            if player.name == self.p1.name:
-                return self.get_probability(self.p1.skill, self.p2.skill)
-            else:
-                return self.get_probability(self.p2.skill, self.p1.skill)
+            return self.get_direct_wl_probability(self.p2_direct, self.p1_direct)
+
+    def get_probability_player(self, player):
+        if player.name == self.p1.name:
+            return self.get_probability(self.p1.skill, self.p2.skill)
+        else:
+            return self.get_probability(self.p2.skill, self.p1.skill)
+
+    def get_wl_probability_player(self, player):
+        if player.name == self.p1.name:
+            return self.get_wl_probability(self.p1, self.p2)
+        else:
+            return self.get_wl_probability(self.p2, self.p1)
 
     def get_bet_winrate(self):
         winrate_probability = self.get_wl_probability(self.p1, self.p2)

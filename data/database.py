@@ -29,7 +29,7 @@ class Database:
 
     def get_logs(self):
         self.cursor.execute("""
-            SELECT p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode FROM logs ORDER BY id ASC;
+            SELECT p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode, datetime FROM logs ORDER BY id ASC;
         """)
         return self.cursor.fetchall()
 

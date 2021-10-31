@@ -1,6 +1,6 @@
 class Log:
 
-    def __init__(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode):
+    def __init__(self, p1_name, p1_amount, p1_streak, p2_name, p2_amount, p2_streak, tier, winner, mode, datetime):
         self.p1_name = p1_name
         self.p1_amount = p1_amount
         self.p1_streak = p1_streak
@@ -10,3 +10,4 @@ class Log:
         self.tier = tier
         self.winner = winner
         self.mode = mode
+        self.datetime = datetime

@@ -12,40 +12,38 @@ class TotalStats(StatsBase):
         logging.info(self.to_text())
 
     def to_text(self):
-        bet_amount = self.format_very_small(self.get_amount(self.total.bet_amount))
-        lowest_amount = self.format_very_small2(self.get_amount(self.total.probability_wins_amount_lowest))
-        target_amount = self.format_very_small(self.get_amount(self.total.target_amount))
-        target_games = self.format_very_small2(self.total.target_games)
+        bet_amount = self.format(self.get_amount(self.total.bet_amount))
+        bet_games = self.format(self.total.bet_games)
         tier_games = self.format_big(self.get_tier_games())
+        tier_directs = self.format_big(self.get_tier_directs())
         tier_characters = self.format_big(self.get_tier_characters())
         total_games = self.format_slightly_small(self.total.games)
-        total_p1_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p1_wins, self.total.games))
-        total_p1_wins_amount = self.format_very_small(self.get_amount_percent(self.total.p1_wins_amount))
-        total_p2_wins = self.format_percent_slightly_small(self.get_ratio(self.total.p2_wins, self.total.games))
-        total_p2_wins_amount = self.format_very_small2(self.get_amount_percent(self.total.p2_wins_amount))
+        total_p1_wins = self.format_percent_slightly_small2(self.get_ratio(self.total.p1_wins, self.total.games))
+        total_p1_amount = self.format(self.get_last_amount(self.total.p1_amount, self.total.bet_games))
+        total_p2_wins = self.format_percent_slightly_small2(self.get_ratio(self.total.p2_wins, self.total.games))
+        total_p2_amount = self.format(self.get_last_amount(self.total.p2_amount, self.total.bet_games))
+        total_direct_games = self.format_slightly_small(self.total.direct_games)
+        total_direct_wins = self.format_percent_slightly_small2(self.get_ratio(self.total.direct_wins, self.total.direct_games))
+        total_direct_amount = self.format(self.get_last_amount(self.total.direct_amount, self.total.bet_games))
         total_wl_games = self.format_slightly_small(self.total.wl_games)
-        total_wl_wins = self.format_percent_slightly_small(self.get_ratio(self.total.wl_wins, self.total.wl_games))
-        total_wl_wins_amount = self.format_very_small(self.get_amount_percent(self.total.wl_wins_amount))
-        total_wl_losses = self.format_percent_slightly_small(self.get_ratio(self.total.wl_losses, self.total.wl_games))
-        total_wl_losses_amount = self.format_very_small2(self.get_amount_percent(self.total.wl_losses_amount))
+        total_wl_wins = self.format_percent_slightly_small2(self.get_ratio(self.total.wl_wins, self.total.wl_games))
+        total_wl_amount = self.format(self.get_last_amount(self.total.wl_amount, self.total.bet_games))
         total_probability_games = self.format_slightly_small(self.total.probability_games)
-        total_probability_wins = self.format_percent_slightly_small(
+        total_probability_wins = self.format_percent_slightly_small2(
             self.get_ratio(self.total.probability_wins, self.total.probability_games))
-        total_probability_wins_amount = self.format_very_small(
-            self.get_amount_percent(self.total.probability_wins_amount))
-        total_probability_losses = self.format_percent_slightly_small(
-            self.get_ratio(self.total.probability_losses, self.total.probability_games))
-        total_probability_losses_amount = self.format_very_small2(
-            self.get_amount_percent(self.total.probability_losses_amount))
+        total_probability_amount = self.format(self.get_last_amount(self.total.probability_amount, self.total.bet_games))
 
         return f"""
             |---------------------------------------------------------------------------------------|
-            | Target stats        | {bet_amount} | {lowest_amount} | {target_amount} | {target_games} |
+            | Target stats        | {bet_amount} | {bet_games} |
             | Tier games          | {tier_games} |
             | Tier characters     | {tier_characters} |
-            | Total stats         | {total_games} | {total_p1_wins} | {total_p2_wins} | {total_p1_wins_amount} | {total_p2_wins_amount} |
-            | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_losses} | {total_wl_wins_amount} | {total_wl_losses_amount} |
-            | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_losses} | {total_probability_wins_amount} | {total_probability_losses_amount} |
+            | Tier directs        | {tier_directs} |
+            | P1 stats            | {total_games} | {total_p1_wins} | {total_p1_amount} |
+            | P2 stats            | {total_games} | {total_p2_wins} | {total_p2_amount} |
+            | Direct stats        | {total_direct_games} | {total_direct_wins} | {total_direct_amount} |
+            | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_amount} |
+            | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_amount} |
             |---------------------------------------------------------------------------------------|"""
 
     def get_amount(self, amount):
@@ -62,16 +60,27 @@ class TotalStats(StatsBase):
 
         return prefix + amount_to
 
+    def get_last_amount(self, amounts, last):
+        return self.get_amount(sum(amounts[-last:]))
+
     def format_big(self, value):
         return self.format(value=value, width=63)
 
     def format_slightly_small(self, value):
-        return self.format(value=value, width=8)
+        return self.format(value=value, width=13)
+
+    def format_slightly_small2(self, value):
+        return self.format(value=value, width=14)
 
     def format_percent_slightly_small(self, probability):
         if probability is None:
             return self.format_slightly_small(None)
         return self.format_slightly_small(value=f'{probability:.2%}')
+
+    def format_percent_slightly_small2(self, probability):
+        if probability is None:
+            return self.format_slightly_small2(None)
+        return self.format_slightly_small2(value=f'{probability:.2%}')
 
     def get_amount_percent(self, amount):
         prefix = '+' if amount > 0 else '-'
@@ -82,3 +91,6 @@ class TotalStats(StatsBase):
 
     def get_tier_characters(self):
         return ' | '.join(list(map(lambda item: self.format(value=f'{item[0]}: {len(item[1])}', width=10), self.total.tier_characters.items())))
+
+    def get_tier_directs(self):
+        return ' | '.join(list(map(lambda item: self.format(value=f'{item[0]}: {item[1]}', width=10), self.total.tier_directs.items())))
