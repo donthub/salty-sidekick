@@ -99,7 +99,7 @@ class PlayerStats(StatsBase):
             | Job                 | {p1_job} | {p2_job} |"""
 
         if self.p1.total_games > 0 or self.p2.total_games > 0:
-            column = 'Bet  !!! DIRECT !!!' if self.p1_direct.total > 0 or self.p2_direct.total > 0 else 'Bet character      '
+            column = 'Bet character      ' if not self.is_direct_explicitly() else 'Bet  !!! DIRECT !!!'
             text += f"""
             |---------------------------------------------------------------------------------------|
             | {column} | {bet_p1_name} | {bet_p2_name} |
@@ -109,6 +109,12 @@ class PlayerStats(StatsBase):
             |---------------------------------------------------------------------------------------|"""
 
         return text
+
+    def is_direct(self):
+        return self.p1_direct.total > 0 or self.p2_direct.total > 0
+
+    def is_direct_explicitly(self):
+        return self.is_direct() and self.p1_direct.wins != self.p2_direct.wins
 
     def get_tiers(self, tiers):
         tiers_text = ', '.join(list(filter(lambda tier: tier != self.tier, tiers)))
@@ -121,7 +127,7 @@ class PlayerStats(StatsBase):
         return direct.amount if direct.total > 0 else None
 
     def get_direct_odds(self, p1_direct, p2_direct):
-        if p1_direct.total == 0 or p2_direct.total == 0 :
+        if not self.is_direct():
             return None
 
         if p1_direct.amount > p2_direct.amount:
@@ -150,7 +156,7 @@ class PlayerStats(StatsBase):
         return Util.get_probability(p1_skill, p2_skill)
 
     def get_direct_wl_probability(self, p1_direct, p2_direct):
-        if p1_direct.total == 0 and p2_direct.total == 0:
+        if not self.is_direct():
             return None
         p1_wl = p1_direct.wins / p1_direct.total if p1_direct.total != 0 else 0.5
         p2_wl = p2_direct.wins / p2_direct.total if p2_direct.total != 0 else 0.5
@@ -196,7 +202,7 @@ class PlayerStats(StatsBase):
     def format_float(self, value):
         if value is None:
             return self.format(None)
-        return self.format(value=f'{value:.4f}')
+        return self.format(value=f'{value:.2f}')
 
     def get_skill(self, skill):
         if self.p1.total_games == 0 and self.p2.total_games == 0:
@@ -246,16 +252,11 @@ class PlayerStats(StatsBase):
         return None
 
     def get_bet_probability_player(self, player):
-        probability = self.get_direct_wl_probability_player(player)
-        if probability == 0.5:
-            probability = self.get_probability_player(player)
-        if probability == 0.5:
-            probability = self.get_wl_probability_player(player)
-        return probability
+        if self.is_direct_explicitly():
+            return self.get_direct_wl_probability_player(player)
+        return self.get_probability_player(player)
 
     def get_direct_wl_probability_player(self, player):
-        if self.p1_direct.total == 0 and self.p2_direct.total == 0:
-            return 0.5
         if player.name == self.p1.name:
             return self.get_direct_wl_probability(self.p1_direct, self.p2_direct)
         else:
@@ -267,12 +268,6 @@ class PlayerStats(StatsBase):
         else:
             return self.get_probability(self.p2.skill, self.p1.skill)
 
-    def get_wl_probability_player(self, player):
-        if player.name == self.p1.name:
-            return self.get_wl_probability(self.p1, self.p2)
-        else:
-            return self.get_wl_probability(self.p2, self.p1)
-
     def get_bet_winrate(self):
         winrate_probability = self.get_wl_probability(self.p1, self.p2)
         if winrate_probability is None or winrate_probability == 0.5:
@@ -280,7 +275,7 @@ class PlayerStats(StatsBase):
         return 'RED' if winrate_probability > 0.5 else 'BLUE'
 
     def get_bet_matches(self, player):
-        if self.p1_direct.total > 0 or self.p2_direct.total > 0:
+        if self.is_direct_explicitly():
             direct = self.p1_direct if player.name == self.p1.name else self.p2_direct
             return f'{direct.wins} - {direct.losses} ({direct.total})'
         else:

@@ -20,6 +20,7 @@ class Better:
         self.is_active = config.bet
         self.simple_ui = config.simple_ui
         self.amount = config.amount
+        self.amount_direct = config.amount_direct
         self.min_balance = config.min_balance
 
         self.driver = None
@@ -60,9 +61,15 @@ class Better:
         if player_stats.mode == Mode.EXHIBITION:
             return
 
-        if player_stats.mode == Mode.MATCHMAKING:
-            if not self.has_balance():
-                return
+        try:
+            balance = self.get_balance()
+        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
+            logging.warning('Error occurred while trying to retrieve balance!')
+            return
+
+        amount = self.get_amount(player_stats, balance)
+        if amount <= 0:
+            return
 
         time.sleep(random.randint(5, 10))
 
@@ -70,7 +77,7 @@ class Better:
         p2_probability = player_stats.get_bet_probability_player(player_stats.p2)
 
         try:
-            self.bet_amount(player_stats)
+            self.bet_amount(amount)
             if p1_probability is not None and p1_probability > 0.5:
                 self.bet_p1()
             elif p2_probability is not None and p2_probability > 0.5:
@@ -88,23 +95,18 @@ class Better:
         player_input = self.driver.find_element(value=player_id)
         player_input.click()
 
-    def bet_amount(self, player_stats):
-        if player_stats.mode == Mode.MATCHMAKING:
-            wager_input = self.driver.find_element(value='wager')
-            wager_input.send_keys(str(self.amount))
-        elif player_stats.mode == Mode.TOURNAMENT:
-            wager_input = self.driver.find_element(value='interval10')
-            wager_input.click()
+    def bet_amount(self, amount):
+        wager_input = self.driver.find_element(value='wager')
+        wager_input.send_keys(str(amount))
 
-    def has_balance(self):
-        try:
-            balance = self.get_balance()
-            if balance - self.amount < self.min_balance:
-                return False
-        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
-            logging.warning('Error occurred while trying to retrieve balance!')
-            return False
-        return True
+    def get_amount(self, player_stats, balance):
+        if player_stats.mode == Mode.MATCHMAKING:
+            amount = self.amount if not player_stats.is_direct_explicitly() else self.amount_direct
+            return min(balance - self.min_balance, amount)
+        elif player_stats.mode == Mode.TOURNAMENT:
+            return balance
+        else:
+            return 0
 
     def get_balance(self):
         balance_text = self.driver.find_element(value='balance').text

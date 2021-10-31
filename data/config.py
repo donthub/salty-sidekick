@@ -14,6 +14,7 @@ class Config:
         self.auth = None
         self.bet = False
         self.amount = 0
+        self.amount_direct = 0
         self.min_balance = 0
         self.init()
 
@@ -37,6 +38,8 @@ class Config:
                 self.simple_ui = config['simple_ui']
             if 'amount' in config:
                 self.amount = int(config['amount'])
+            if 'amount_direct' in config:
+                self.amount_direct = int(config['amount_direct'])
             if 'min_balance' in config:
                 self.min_balance = int(config['min_balance'])
 

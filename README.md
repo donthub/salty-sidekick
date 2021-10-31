@@ -33,8 +33,11 @@ For automatic betting to be enabled, the following is required:
 
 * `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
 * `bet`: `true` to enable automatic betting, `false` otherwise.
-* `amount`: Automatic betting amount for matchmaking. Tournaments are all in, exhibitions are ignored.
-* `min_balance`: If automatic betting would result in balance lower than this amount, betting will not be performed.
+* `amount`: Betting amount for matchmaking.
+* `amount_direct`: Betting amount for matchmaking between characters with direct match history.
+* `min_balance`: Betting will not lower balance below this value.
+
+Tournaments are all in, exhibitions are ignored.
 
 # Usage
 
