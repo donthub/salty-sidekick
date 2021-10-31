@@ -10,4 +10,5 @@ class Util:
         delta_mu = p1_skill.mu - p2_skill.mu
         sum_sigma = p1_skill.sigma ** 2 + p2_skill.sigma ** 2
         denom = math.sqrt(2 * (trueskill.BETA * trueskill.BETA) + sum_sigma)
-        return trueskill.global_env().cdf(delta_mu / denom)
+        probability = trueskill.global_env().cdf(delta_mu / denom)
+        return round(probability, 4)

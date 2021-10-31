@@ -4,7 +4,7 @@ from util.util import Util
 
 class Total:
 
-    def __init__(self, bet_amount=200000, bet_games=50000):
+    def __init__(self, bet_amount=200000, bet_games=10000):
         self.bet_amount = bet_amount
         self.bet_games = bet_games
 
@@ -114,11 +114,11 @@ class Total:
         self.probability_games += 1
         if winner_probability > 0.5:
             self.probability_wins += 1
-            if Mode.MATCHMAKING:
+            if log.mode == Mode.MATCHMAKING:
                 self.probability_amount.append(winner_odds * self.bet_amount)
         if winner_probability < 0.5:
             self.probability_losses += 1
-            if Mode.MATCHMAKING:
+            if log.mode == Mode.MATCHMAKING:
                 self.probability_amount.append(-1 * self.bet_amount)
 
     def get_odds(self, log, player):
