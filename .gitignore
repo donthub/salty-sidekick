@@ -4,7 +4,7 @@ build/
 dist/
 venv/
 **/__pycache__/*
-Salty.egg-info
+*.egg-info/
 
 # Application
 logs/
