@@ -117,8 +117,11 @@ class PlayerStats(StatsBase):
         return self.is_direct() and self.p1_direct.wins != self.p2_direct.wins
 
     def get_tiers(self, tiers):
-        tiers_text = ', '.join(list(filter(lambda tier: tier != self.tier, tiers)))
+        tiers_text = ', '.join(list(filter(self.is_other_tier, tiers)))
         return tiers_text if len(tiers_text) > 0 else None
+
+    def is_other_tier(self, tier):
+        return tier is not None and self.tier is not None and tier != self.tier
 
     def get_direct_wins(self, direct):
         return direct.wins if direct.total > 0 else None
