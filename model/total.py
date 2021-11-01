@@ -4,9 +4,9 @@ from util.util import Util
 
 class Total:
 
-    def __init__(self, bet_amount=200000, bet_games=10000):
-        self.bet_amount = bet_amount
-        self.bet_games = bet_games
+    def __init__(self, config):
+        self.stats_amount = config.stats_amount
+        self.stats_games = config.stats_games
 
         self.tier_games = {}
         self.tier_characters = {}
@@ -59,12 +59,12 @@ class Total:
         self.games += 1
         if log.winner == log.p1_name:
             self.p1_wins += 1
-            self.p1_amount.append(winner_odds * self.bet_amount)
-            self.p2_amount.append(-1 * self.bet_amount)
+            self.p1_amount.append(winner_odds * self.stats_amount)
+            self.p2_amount.append(-1 * self.stats_amount)
         if log.winner == log.p2_name:
             self.p2_wins += 1
-            self.p2_amount.append(winner_odds * self.bet_amount)
-            self.p1_amount.append(-1 * self.bet_amount)
+            self.p2_amount.append(winner_odds * self.stats_amount)
+            self.p1_amount.append(-1 * self.stats_amount)
 
     def add_log_direct(self, log, winner, loser, winner_odds):
         winner_direct = winner.get_direct(loser.name)
@@ -78,11 +78,11 @@ class Total:
         if winner_direct.wins > winner_direct.losses:
             self.direct_wins += 1
             if log.mode == Mode.MATCHMAKING:
-                self.direct_amount.append(winner_odds * self.bet_amount)
+                self.direct_amount.append(winner_odds * self.stats_amount)
         else:
             self.direct_losses += 1
             if log.mode == Mode.MATCHMAKING:
-                self.direct_amount.append(-1 * self.bet_amount)
+                self.direct_amount.append(-1 * self.stats_amount)
 
     def add_log_wl(self, log, winner, loser, winner_odds):
         winner_wl = winner.total_wins / winner.total_games if winner.total_games != 0.0 else 0.5
@@ -98,11 +98,11 @@ class Total:
         if winner_wl_probability > 0.5:
             self.wl_wins += 1
             if log.mode == Mode.MATCHMAKING:
-                self.wl_amount.append(winner_odds * self.bet_amount)
+                self.wl_amount.append(winner_odds * self.stats_amount)
         if winner_wl_probability < 0.5:
             self.wl_losses += 1
             if log.mode == Mode.MATCHMAKING:
-                self.wl_amount.append(-1 * self.bet_amount)
+                self.wl_amount.append(-1 * self.stats_amount)
 
     def add_log_probability(self, log, winner, loser, winner_odds):
         winner_probability = Util.get_probability(winner.skill, loser.skill)
@@ -115,15 +115,15 @@ class Total:
         if winner_probability > 0.5:
             self.probability_wins += 1
             if log.mode == Mode.MATCHMAKING:
-                self.probability_amount.append(winner_odds * self.bet_amount)
+                self.probability_amount.append(winner_odds * self.stats_amount)
         if winner_probability < 0.5:
             self.probability_losses += 1
             if log.mode == Mode.MATCHMAKING:
-                self.probability_amount.append(-1 * self.bet_amount)
+                self.probability_amount.append(-1 * self.stats_amount)
 
     def get_odds(self, log, player):
-        p1_amount = int(log.p1_amount) + self.bet_amount if log.p1_name == player.name else int(log.p1_amount)
-        p2_amount = int(log.p2_amount) + self.bet_amount if log.p2_name == player.name else int(log.p2_amount)
+        p1_amount = int(log.p1_amount) + self.stats_amount if log.p1_name == player.name else int(log.p1_amount)
+        p2_amount = int(log.p2_amount) + self.stats_amount if log.p2_name == player.name else int(log.p2_amount)
         odds = p1_amount / p2_amount
         if log.p1_name == player.name:
             odds = 1 / odds

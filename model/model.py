@@ -10,10 +10,10 @@ from util.util import Util
 
 class Model:
 
-    def __init__(self, database):
+    def __init__(self, database, config):
         self.database = database
         self.players = {}
-        self.total = Total()
+        self.total = Total(config)
         self.init()
 
     def init(self):

@@ -16,6 +16,8 @@ class Config:
         self.amount = 0
         self.amount_direct = 0
         self.min_balance = 0
+        self.stats_amount = 0
+        self.stats_games = 0
         self.init()
 
     def init(self):
@@ -31,6 +33,11 @@ class Config:
             config = json.load(file)
 
         self.auth = self.get_auth(config)
+
+        if 'stats_amount' in config:
+            self.stats_amount = int(config['stats_amount'])
+        if 'stats_games' in config:
+            self.stats_games = int(config['stats_games'])
 
         self.bet = 'bet' in config and config['bet']
         if self.bet:

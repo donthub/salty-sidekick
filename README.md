@@ -17,6 +17,8 @@ Python version `3.9` or greater.
 * `username`: Twitch username.
 * `oauth_token`: OAuth token for Twitch username.
     * E.g.: https://twitchapps.com/tmi/
+* `stats_amount`: Total stats calculation with this bet amount.
+* `stats_games`: Total stats calculation with this number of last games.
 
 `pip install -r requirements.txt`: Installs Python dependencies.
 
@@ -31,8 +33,8 @@ For automatic betting to be enabled, the following is required:
 
 `config.json`:
 
-* `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
 * `bet`: `true` to enable automatic betting, `false` otherwise.
+* `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
 * `amount`: Betting amount for matchmaking.
 * `amount_direct`: Betting amount for matchmaking between characters with direct match history.
 * `min_balance`: Betting will not lower balance below this value.
