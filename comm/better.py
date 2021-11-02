@@ -55,35 +55,35 @@ class Better:
         return driver.execute_script('return document.readyState') == 'complete'
 
     def bet(self, player_stats):
+        try:
+            self.try_bet(player_stats)
+        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
+            logging.warning('Error occurred while trying to bet!')
+
+    def try_bet(self, player_stats):
         if not self.is_active:
             return
 
         if player_stats.mode == Mode.EXHIBITION:
             return
 
-        try:
-            balance = self.get_balance()
-        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
-            logging.warning('Error occurred while trying to retrieve balance!')
+        p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
+        if p1_probability is None or p1_probability == 0.5:
             return
 
+        balance = self.get_balance()
         amount = self.get_amount(player_stats, balance)
+
         if amount <= 0:
             return
 
         time.sleep(random.randint(5, 10))
 
-        p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
-        p2_probability = player_stats.get_bet_probability_player(player_stats.p2)
-
-        try:
-            self.bet_amount(amount)
-            if p1_probability is not None and p1_probability > 0.5:
-                self.bet_p1()
-            elif p2_probability is not None and p2_probability > 0.5:
-                self.bet_p2()
-        except (NoSuchElementException, StaleElementReferenceException, ElementNotInteractableException):
-            logging.warning('Error occurred while trying to bet!')
+        self.bet_amount(amount)
+        if p1_probability > 0.5:
+            self.bet_p1()
+        else:
+            self.bet_p2()
 
     def bet_p1(self):
         self.bet_player('player1')
@@ -110,4 +110,5 @@ class Better:
 
     def get_balance(self):
         balance_text = self.driver.find_element(value='balance').text
-        return int(balance_text.replace(',', ''))
+        balance_text = balance_text.replace(',', '')
+        return int(balance_text) if balance_text else 0

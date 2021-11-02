@@ -47,7 +47,7 @@ class TotalStats(StatsBase):
             |---------------------------------------------------------------------------------------|"""
 
     def get_amount(self, amount):
-        prefix = '+' if amount > 0 else '-'
+        prefix = self.get_prefix(amount)
         amount_from = str(abs(round(amount)))
         amount_to = ''
 
@@ -59,6 +59,14 @@ class TotalStats(StatsBase):
             index += 1
 
         return prefix + amount_to
+
+    def get_prefix(self, amount):
+        if amount > 0:
+            return '+'
+        elif amount < 0:
+            return '-'
+        else:
+            return ''
 
     def get_last_amount(self, amounts, last):
         return self.get_amount(sum(amounts[-last:]))
