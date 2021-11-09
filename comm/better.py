@@ -20,6 +20,8 @@ class Better:
         self.amount = config.amount
         self.amount_direct = config.amount_direct
         self.min_balance = config.min_balance
+        self.loyalties = config.loyalties
+        self.amount_loyalty = config.amount_loyalty
 
         self.driver = None
         self.init()
@@ -65,13 +67,38 @@ class Better:
         if player_stats.mode == Mode.EXHIBITION:
             return
 
+        bet_completed = self.bet_loyalty(player_stats)
+        if not bet_completed:
+            self.bet_normal(player_stats)
+
+    def bet_loyalty(self, player_stats):
+        p1_name = player_stats.p1.name
+        p2_name = player_stats.p2.name
+
+        if p1_name not in self.loyalties and p2_name not in self.loyalties or \
+                p1_name in self.loyalties and p2_name in self.loyalties:
+            return False
+
+        amount = self.get_loyalty_amount(player_stats)
+        if amount <= 0:
+            return False
+
+        time.sleep(random.randint(5, 10))
+
+        self.bet_amount(amount)
+        if p1_name in self.loyalties:
+            self.bet_p1()
+        elif p2_name in self.loyalties:
+            self.bet_p2()
+
+        return True
+
+    def bet_normal(self, player_stats):
         p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
         if p1_probability is None or p1_probability == 0.5:
             return
 
-        balance = self.get_balance()
-        amount = self.get_amount(player_stats, balance)
-
+        amount = self.get_normal_amount(player_stats)
         if amount <= 0:
             return
 
@@ -97,14 +124,22 @@ class Better:
         wager_input = self.driver.find_element(value='wager')
         wager_input.send_keys(str(amount))
 
-    def get_amount(self, player_stats, balance):
-        if player_stats.mode == Mode.MATCHMAKING:
-            amount = self.amount if not player_stats.is_direct_explicitly() else self.amount_direct
-            return min(balance - self.min_balance, amount)
-        elif player_stats.mode == Mode.TOURNAMENT:
-            return balance
-        else:
-            return 0
+    def get_loyalty_amount(self, player_stats):
+        return self.get_amount(player_stats, self.amount_loyalty)
+
+    def get_normal_amount(self, player_stats):
+        amount = self.amount_direct if player_stats.is_direct_explicitly() else self.amount
+        return self.get_amount(player_stats, amount)
+
+    def get_amount(self, player_stats, amount):
+        mode = player_stats.mode
+        if mode == Mode.MATCHMAKING or mode == Mode.TOURNAMENT:
+            balance = self.get_balance()
+            if mode == Mode.MATCHMAKING:
+                return min(balance, amount)
+            if mode == Mode.TOURNAMENT:
+                return balance
+        return 0
 
     def get_balance(self):
         balance_text = self.driver.find_element(value='balance').text

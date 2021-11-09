@@ -14,6 +14,7 @@ class Model:
         self.database = database
         self.players = {}
         self.total = Total(config)
+        self.loyalties = config.loyalties
         self.init()
 
     def init(self):
@@ -56,7 +57,7 @@ class Model:
         p2 = self.get_player(p2_name, tier)
         p1_tiers = self.get_player_tiers(p1_name)
         p2_tiers = self.get_player_tiers(p2_name)
-        player_stats = PlayerStats(p1, p2, tier, p1_tiers, p2_tiers, mode, left)
+        player_stats = PlayerStats(p1, p2, tier, p1_tiers, p2_tiers, mode, left, self.loyalties)
         return player_stats
 
     def get_player_tiers(self, name):
@@ -65,5 +66,4 @@ class Model:
     def get_probability_player_name(self, p1_name, p2_name, tier):
         p1 = self.get_player(p1_name, tier)
         p2 = self.get_player(p2_name, tier)
-        player_stats = PlayerStats(p1, p2, tier)
-        return player_stats.get_bet_player_name()
+        return Util.get_probability_player_name(p1, p2)

@@ -6,7 +6,7 @@ from util.util import Util
 
 class PlayerStats(StatsBase):
 
-    def __init__(self, p1, p2, tier, p1_tiers=None, p2_tiers=None, mode=None, left=None):
+    def __init__(self, p1, p2, tier, p1_tiers, p2_tiers, mode, left, loyalties):
         self.p1 = p1
         self.p2 = p2
         self.tier = tier
@@ -16,6 +16,7 @@ class PlayerStats(StatsBase):
         self.p2_tiers = p2_tiers
         self.p1_direct = self.p1.get_direct(p2.name)
         self.p2_direct = self.p2.get_direct(p1.name)
+        self.loyalties = loyalties
 
     def print(self):
         logging.info(self.to_text())
@@ -96,7 +97,7 @@ class PlayerStats(StatsBase):
             | Job                 | {p1_job} | {p2_job} |"""
 
         if self.p1.total_games > 0 or self.p2.total_games > 0:
-            column = 'Bet character      ' if not self.is_direct_explicitly() else 'Bet  !!! DIRECT !!!'
+            column = self.get_column()
             text += f"""
             |---------------------------------------------------------------------------------------|
             | {column} | {bet_p1_name} | {bet_p2_name} |
@@ -112,6 +113,15 @@ class PlayerStats(StatsBase):
 
     def is_direct_explicitly(self):
         return self.is_direct() and self.p1_direct.wins != self.p2_direct.wins
+
+    def get_column(self):
+        if self.p1.name in self.loyalties and self.p2.name not in self.loyalties or \
+                self.p2.name in self.loyalties and self.p1 not in self.loyalties:
+            return 'Bet !!! LOYALTY !!!'
+        elif self.is_direct_explicitly():
+            return 'Bet  !!! DIRECT !!!'
+        else:
+            return 'Bet character      '
 
     def get_tiers(self, tiers):
         tiers_text = ', '.join(list(filter(self.is_other_tier, tiers)))
@@ -224,20 +234,7 @@ class PlayerStats(StatsBase):
         return None
 
     def get_bet_player_name(self):
-        p1_direct_wins = self.get_direct_wins(self.p1_direct)
-        p2_direct_wins = self.get_direct_wins(self.p2_direct)
-        if p1_direct_wins is None and p2_direct_wins is None:
-            p1_probability = self.get_bet_probability_player(self.p1)
-            p2_probability = self.get_bet_probability_player(self.p2)
-            if p1_probability is not None and p1_probability > 0.5:
-                return self.p1.name
-            if p2_probability is not None and p2_probability > 0.5:
-                return self.p2.name
-        elif p2_direct_wins is None or p1_direct_wins > p2_direct_wins:
-            return self.p1.name
-        elif p1_direct_wins is None or p2_direct_wins > p1_direct_wins:
-            return self.p2.name
-        return None
+        return Util.get_probability_player_name(self.p1, self.p2)
 
     def get_bet_probability_player(self, player):
         if self.is_direct_explicitly():

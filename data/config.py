@@ -10,14 +10,16 @@ class Config:
         self.path = path
         self.sample_path = sample_path
 
+        self.stats_amount = 0
+        self.stats_games = 0
         self.simple_ui = False
         self.auth = None
         self.bet = False
         self.amount = 0
         self.amount_direct = 0
         self.min_balance = 0
-        self.stats_amount = 0
-        self.stats_games = 0
+        self.loyalties = []
+        self.amount_loyalty = 0
         self.init()
 
     def init(self):
@@ -49,6 +51,10 @@ class Config:
                 self.amount_direct = int(config['amount_direct'])
             if 'min_balance' in config:
                 self.min_balance = int(config['min_balance'])
+            if 'loyalties' in config:
+                self.loyalties = config['loyalties']
+            if 'amount_loyalty' in config:
+                self.amount_loyalty = config['amount_loyalty']
 
     def get_auth(self, config):
         username = self.strip(config['username'])
