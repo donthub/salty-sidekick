@@ -6,6 +6,7 @@ from comm.messageparser import MessageParser
 
 
 class Chatter(ChatterBase):
+
     def __init__(self, config, collector, channel='saltybet'):
         self.collector = collector
         self.parser = MessageParser(collector)

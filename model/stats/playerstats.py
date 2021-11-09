@@ -32,14 +32,12 @@ class PlayerStats(StatsBase):
         p2_date_time = self.format(self.p2.date_time)
         p1_direct_wins = self.format(self.get_direct_wins(self.p1_direct))
         p2_direct_wins = self.format(self.get_direct_wins(self.p2_direct))
-        p1_direct_wl_ratio = self.format_percent(self.get_ratio(self.p1_direct.wins, self.p1_direct.total))
-        p2_direct_wl_ratio = self.format_percent(self.get_ratio(self.p2_direct.wins, self.p2_direct.total))
         p1_direct_wl_probability = self.format_percent(self.get_direct_wl_probability(self.p1_direct, self.p2_direct))
         p2_direct_wl_probability = self.format_percent(self.get_direct_wl_probability(self.p2_direct, self.p1_direct))
         p1_direct_amount = self.format(self.get_direct_amount(self.p1_direct))
         p2_direct_amount = self.format(self.get_direct_amount(self.p2_direct))
-        p1_direct_odds = self.format(self.get_direct_odds(self.p1_direct, self.p2_direct))
-        p2_direct_odds = self.format(self.get_direct_odds(self.p2_direct, self.p1_direct))
+        p1_direct_odds = self.format_float(self.get_direct_odds(self.p1_direct, self.p2_direct))
+        p2_direct_odds = self.format_float(self.get_direct_odds(self.p2_direct, self.p1_direct))
         p1_total_wins = self.format(self.get_total_wins(self.p1))
         p2_total_wins = self.format(self.get_total_wins(self.p2))
         p1_total_losses = self.format(self.get_total_losses(self.p1))
@@ -80,7 +78,6 @@ class PlayerStats(StatsBase):
             | Other tiers         | {p1_tiers} | {p2_tiers} |
             |---------------------------------------------------------------------------------------|
             | Direct wins         | {p1_direct_wins} | {p2_direct_wins} | 
-            | Direct winrate      | {p1_direct_wl_ratio} | {p2_direct_wl_ratio} |
             | Direct probability  | {p1_direct_wl_probability} | {p2_direct_wl_probability} |
             | Direct amount       | {p1_direct_amount} | {p2_direct_amount} |
             | Direct odds         | {p1_direct_odds} | {p2_direct_odds} |
@@ -132,11 +129,7 @@ class PlayerStats(StatsBase):
     def get_direct_odds(self, p1_direct, p2_direct):
         if not self.is_direct():
             return None
-
-        if p1_direct.amount > p2_direct.amount:
-            return round(p1_direct.amount / p2_direct.amount, 2)
-        else:
-            return 1
+        return p2_direct.amount / p1_direct.amount
 
     def get_total_wins(self, player):
         return player.total_wins if player.total_games > 0 else None
@@ -175,9 +168,6 @@ class PlayerStats(StatsBase):
     def format_mode(self, mode):
         return self.format(value=str(mode).title(), width=19)
 
-    def format_small(self, value):
-        return self.format(value=value, width=19)
-
     def format_tier(self, tier):
         if tier is None:
             tier = '?'
@@ -214,9 +204,9 @@ class PlayerStats(StatsBase):
         if skill is None:
             return None
 
-        min = skill.mu - 2 * skill.sigma
-        max = skill.mu + 2 * skill.sigma
-        return f'{skill.mu:.2f} ({min:.2f} - {max:.2f})'
+        skill_min = skill.mu - 2 * skill.sigma
+        skill_max = skill.mu + 2 * skill.sigma
+        return f'{skill.mu:.2f} ({skill_min:.2f} - {skill_max:.2f})'
 
     def format_percent(self, percent):
         if percent is None:
@@ -227,11 +217,6 @@ class PlayerStats(StatsBase):
         if probability is None:
             return self.format_very_small(None)
         return self.format_very_small(value=f'{probability:.2%}')
-
-    def get_odds(self, odds, games):
-        if games == 0:
-            return None
-        return round(odds / games, 2)
 
     def format_bet_player_name(self, player, player_name):
         if player_name == player.name:
@@ -270,12 +255,6 @@ class PlayerStats(StatsBase):
             return self.get_probability(self.p1.skill, self.p2.skill)
         else:
             return self.get_probability(self.p2.skill, self.p1.skill)
-
-    def get_bet_winrate(self):
-        winrate_probability = self.get_wl_probability(self.p1, self.p2)
-        if winrate_probability is None or winrate_probability == 0.5:
-            return None
-        return 'RED' if winrate_probability > 0.5 else 'BLUE'
 
     def get_bet_matches(self, player):
         if self.is_direct_explicitly():

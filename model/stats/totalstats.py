@@ -80,11 +80,6 @@ class TotalStats(StatsBase):
     def format_slightly_small2(self, value):
         return self.format(value=value, width=14)
 
-    def format_percent_slightly_small(self, probability):
-        if probability is None:
-            return self.format_slightly_small(None)
-        return self.format_slightly_small(value=f'{probability:.2%}')
-
     def format_percent_slightly_small2(self, probability):
         if probability is None:
             return self.format_slightly_small2(None)

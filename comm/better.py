@@ -13,8 +13,6 @@ from util.mode import Mode
 
 
 class Better:
-    class BetException(Exception):
-        pass
 
     def __init__(self, config):
         self.is_active = config.bet
