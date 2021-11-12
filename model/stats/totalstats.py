@@ -32,6 +32,14 @@ class TotalStats(StatsBase):
         total_probability_wins = self.format_percent_slightly_small2(
             self.get_ratio(self.total.probability_wins, self.total.probability_games))
         total_probability_amount = self.format(self.get_last_amount(self.total.probability_amount, self.total.stats_games))
+        total_compare_games = self.format_very_small2(self.total.compare_games)
+        total_compare_wins = self.format_percent_very_small(self.get_ratio(self.total.compare_wins, self.total.compare_games))
+        total_compare_expected_amount = self.format_very_small(self.get_last_amount(self.total.compare_expected_amount, self.total.stats_games))
+        total_compare_upset_amount = self.format_very_small2(self.get_last_amount(self.total.compare_upset_amount, self.total.stats_games))
+        total_close_games = self.format_very_small2(self.total.close_games)
+        total_close_wins = self.format_percent_very_small(self.get_ratio(self.total.close_wins, self.total.close_games))
+        total_close_expected_amount = self.format_very_small(self.get_last_amount(self.total.close_expected_amount, self.total.stats_games))
+        total_close_upset_amount = self.format_very_small2(self.get_last_amount(self.total.close_upset_amount, self.total.stats_games))
 
         return f"""
             |---------------------------------------------------------------------------------------|
@@ -44,6 +52,8 @@ class TotalStats(StatsBase):
             | Direct stats        | {total_direct_games} | {total_direct_wins} | {total_direct_amount} |
             | Winrate stats       | {total_wl_games} | {total_wl_wins} | {total_wl_amount} |
             | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_amount} |
+            | Compare stats       | {total_compare_games} | {total_compare_wins} | {total_compare_expected_amount} | {total_compare_upset_amount} |
+            | Close stats         | {total_close_games} | {total_close_wins} | {total_close_expected_amount} | {total_close_upset_amount} |
             |---------------------------------------------------------------------------------------|"""
 
     def get_amount(self, amount):
@@ -84,6 +94,11 @@ class TotalStats(StatsBase):
         if probability is None:
             return self.format_slightly_small2(None)
         return self.format_slightly_small2(value=f'{probability:.2%}')
+
+    def format_percent_very_small(self, probability):
+        if probability is None:
+            return self.format_very_small(None)
+        return self.format_very_small(value=f'{probability:.2%}')
 
     def get_tier_games(self):
         return ' | '.join(list(map(lambda item: self.format(value=f'{item[0]}: {item[1]}', width=10), self.total.tier_games.items())))

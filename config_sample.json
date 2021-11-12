@@ -9,5 +9,6 @@
   "amount_direct": 10000,
   "min_balance": 0,
   "loyalties": [],
-  "amount_loyalty": 0
+  "amount_loyalty": 0,
+  "close_range": 15
 }

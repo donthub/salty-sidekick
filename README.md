@@ -40,6 +40,7 @@ For automatic betting to be enabled, the following is required:
 * `min_balance`: Betting will not lower balance below this value.
 * `loyalties`: List of names to always bet on. If both characters are in the list of names, normal betting will be used.
 * `amount_loyalty`: Betting amount for loyalties.
+* `close_range`: Bet upset if winrate probability of the characters are within this range (percent). 
 
 Tournaments are all in, exhibitions are ignored.
 

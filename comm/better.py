@@ -22,6 +22,7 @@ class Better:
         self.min_balance = config.min_balance
         self.loyalties = config.loyalties
         self.amount_loyalty = config.amount_loyalty
+        self.close_range = config.close_range
 
         self.driver = None
         self.init()
@@ -94,8 +95,8 @@ class Better:
         return True
 
     def bet_normal(self, player_stats):
-        p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
-        if p1_probability is None or p1_probability == 0.5:
+        p1_wl_probability = player_stats.get_bet_wl_probability_player(player_stats.p1)
+        if p1_wl_probability is None or p1_wl_probability == 0.5:
             return
 
         amount = self.get_normal_amount(player_stats)
@@ -105,10 +106,20 @@ class Better:
         time.sleep(random.randint(5, 10))
 
         self.bet_amount(amount)
-        if p1_probability > 0.5:
+
+        p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
+        if self.is_probability_reverse(p1_probability, p1_wl_probability) or \
+                self.is_probability_range(p1_wl_probability):
             self.bet_p1()
         else:
             self.bet_p2()
+
+    def is_probability_reverse(self, p1_probability, p1_wl_probability):
+        return p1_probability is not None and p1_probability > 0.5 > p1_wl_probability
+
+    def is_probability_range(self, p1_wl_probability):
+        diff = self.close_range / 200
+        return p1_wl_probability > 0.5 + diff or 0.5 > p1_wl_probability > 0.5 - diff
 
     def bet_p1(self):
         self.bet_player('player1')

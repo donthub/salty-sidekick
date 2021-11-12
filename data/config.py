@@ -12,6 +12,7 @@ class Config:
 
         self.stats_amount = 0
         self.stats_games = 0
+        self.close_range = 20
         self.simple_ui = False
         self.auth = None
         self.bet = False
@@ -40,6 +41,8 @@ class Config:
             self.stats_amount = int(config['stats_amount'])
         if 'stats_games' in config:
             self.stats_games = int(config['stats_games'])
+        if 'close_range' in config:
+            self.close_range = int(config['close_range'])
 
         self.bet = 'bet' in config and config['bet']
         if self.bet:
