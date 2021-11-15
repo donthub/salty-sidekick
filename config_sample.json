@@ -10,5 +10,7 @@
   "min_balance": 0,
   "loyalties": [],
   "amount_loyalty": 0,
-  "close_range": 15
+  "close_range": 10,
+  "bet_p1": true,
+  "bet_p2": true
 }

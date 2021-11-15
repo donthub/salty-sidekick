@@ -23,6 +23,8 @@ class Better:
         self.loyalties = config.loyalties
         self.amount_loyalty = config.amount_loyalty
         self.close_range = config.close_range
+        self.bet_p1 = config.bet_p1
+        self.bet_p2 = config.bet_p2
 
         self.driver = None
         self.init()
@@ -88,17 +90,13 @@ class Better:
 
         self.bet_amount(amount)
         if p1_name in self.loyalties:
-            self.bet_p1()
+            self.bet_player_p1()
         elif p2_name in self.loyalties:
-            self.bet_p2()
+            self.bet_player_p2()
 
         return True
 
     def bet_normal(self, player_stats):
-        p1_wl_probability = player_stats.get_bet_wl_probability_player(player_stats.p1)
-        if p1_wl_probability is None or p1_wl_probability == 0.5:
-            return
-
         amount = self.get_normal_amount(player_stats)
         if amount <= 0:
             return
@@ -107,24 +105,27 @@ class Better:
 
         self.bet_amount(amount)
 
-        p1_probability = player_stats.get_bet_probability_player(player_stats.p1)
-        if self.is_probability_reverse(p1_probability, p1_wl_probability) or \
-                self.is_probability_range(p1_wl_probability):
-            self.bet_p1()
-        else:
-            self.bet_p2()
+        if self.is_probability_range(player_stats, player_stats.p1) and self.bet_p1:
+            self.bet_player_p1()
+        elif self.is_probability_range(player_stats, player_stats.p2) and self.bet_p2:
+            self.bet_player_p2()
 
-    def is_probability_reverse(self, p1_probability, p1_wl_probability):
-        return p1_probability is not None and p1_probability > 0.5 > p1_wl_probability
-
-    def is_probability_range(self, p1_wl_probability):
+    def is_probability_range(self, player_stats, player):
+        wl_probability = player_stats.get_bet_wl_probability_player(player)
+        skill_probability = player_stats.get_bet_probability_player(player)
+        if skill_probability > 0.5 > wl_probability:
+            return True
+        if skill_probability < 0.5 < wl_probability:
+            return False
+        if wl_probability == 0.5:
+            return skill_probability > 0.5
         diff = self.close_range / 200
-        return p1_wl_probability > 0.5 + diff or 0.5 > p1_wl_probability > 0.5 - diff
+        return wl_probability > 0.5 + diff or 0.5 > wl_probability >= 0.5 - diff
 
-    def bet_p1(self):
+    def bet_player_p1(self):
         self.bet_player('player1')
 
-    def bet_p2(self):
+    def bet_player_p2(self):
         self.bet_player('player2')
 
     def bet_player(self, player_id):

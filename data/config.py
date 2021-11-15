@@ -21,6 +21,8 @@ class Config:
         self.min_balance = 0
         self.loyalties = []
         self.amount_loyalty = 0
+        self.bet_p1 = True
+        self.bet_p2 = True
         self.init()
 
     def init(self):
@@ -44,10 +46,10 @@ class Config:
         if 'close_range' in config:
             self.close_range = int(config['close_range'])
 
-        self.bet = 'bet' in config and config['bet']
+        self.bet = 'bet' in config and bool(config['bet'])
         if self.bet:
             if 'simple_ui' in config:
-                self.simple_ui = config['simple_ui']
+                self.simple_ui = bool(config['simple_ui'])
             if 'amount' in config:
                 self.amount = int(config['amount'])
             if 'amount_direct' in config:
@@ -57,7 +59,11 @@ class Config:
             if 'loyalties' in config:
                 self.loyalties = config['loyalties']
             if 'amount_loyalty' in config:
-                self.amount_loyalty = config['amount_loyalty']
+                self.amount_loyalty = int(config['amount_loyalty'])
+            if 'bet_p1' in config:
+                self.bet_p1 = bool(config['bet_p1'])
+            if 'bet_p2' in config:
+                self.bet_p2 = bool(config['bet_p2'])
 
     def get_auth(self, config):
         username = self.strip(config['username'])
