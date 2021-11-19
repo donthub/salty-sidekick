@@ -8,9 +8,5 @@
   "amount": 1000,
   "amount_direct": 10000,
   "min_balance": 0,
-  "loyalties": [],
-  "amount_loyalty": 0,
-  "close_range": 10,
-  "bet_p1": true,
-  "bet_p2": true
+  "close_range": 10
 }

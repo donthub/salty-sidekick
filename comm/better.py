@@ -20,11 +20,7 @@ class Better:
         self.amount = config.amount
         self.amount_direct = config.amount_direct
         self.min_balance = config.min_balance
-        self.loyalties = config.loyalties
-        self.amount_loyalty = config.amount_loyalty
         self.close_range = config.close_range
-        self.bet_p1 = config.bet_p1
-        self.bet_p2 = config.bet_p2
 
         self.driver = None
         self.init()
@@ -64,55 +60,27 @@ class Better:
             logging.warning('Error occurred while trying to bet!')
 
     def try_bet(self, player_stats):
-        if not self.is_active:
+        if not self.is_active or player_stats.mode == Mode.EXHIBITION:
             return
 
-        if player_stats.mode == Mode.EXHIBITION:
-            return
-
-        bet_completed = self.bet_loyalty(player_stats)
-        if not bet_completed:
-            self.bet_normal(player_stats)
-
-    def bet_loyalty(self, player_stats):
-        p1_name = player_stats.p1.name
-        p2_name = player_stats.p2.name
-
-        if p1_name not in self.loyalties and p2_name not in self.loyalties or \
-                p1_name in self.loyalties and p2_name in self.loyalties:
-            return False
-
-        amount = self.get_loyalty_amount(player_stats)
-        if amount <= 0:
-            return False
-
-        time.sleep(random.randint(5, 10))
-
-        self.bet_amount(amount)
-        if p1_name in self.loyalties:
-            self.bet_player_p1()
-        elif p2_name in self.loyalties:
-            self.bet_player_p2()
-
-        return True
-
-    def bet_normal(self, player_stats):
         amount = self.get_normal_amount(player_stats)
         if amount <= 0:
             return
 
-        time.sleep(random.randint(5, 10))
+        time.sleep(random.randint(5, 8))
 
         self.bet_amount(amount)
 
-        if self.is_probability_range(player_stats, player_stats.p1) and self.bet_p1:
+        if self.is_probability_range(player_stats, player_stats.p1):
             self.bet_player_p1()
-        elif self.is_probability_range(player_stats, player_stats.p2) and self.bet_p2:
+        elif self.is_probability_range(player_stats, player_stats.p2):
             self.bet_player_p2()
 
     def is_probability_range(self, player_stats, player):
         wl_probability = player_stats.get_bet_wl_probability_player(player)
         skill_probability = player_stats.get_bet_probability_player(player)
+        if wl_probability is None or skill_probability is None:
+            return False
         if skill_probability > 0.5 > wl_probability:
             return True
         if skill_probability < 0.5 < wl_probability:
@@ -135,9 +103,6 @@ class Better:
     def bet_amount(self, amount):
         wager_input = self.driver.find_element(value='wager')
         wager_input.send_keys(str(amount))
-
-    def get_loyalty_amount(self, player_stats):
-        return self.get_amount(player_stats, self.amount_loyalty)
 
     def get_normal_amount(self, player_stats):
         amount = self.amount_direct if player_stats.is_direct_explicitly() else self.amount

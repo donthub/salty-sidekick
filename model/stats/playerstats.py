@@ -6,7 +6,7 @@ from util.util import Util
 
 class PlayerStats(StatsBase):
 
-    def __init__(self, p1, p2, tier, p1_tiers, p2_tiers, mode, left, loyalties):
+    def __init__(self, p1, p2, tier, p1_tiers, p2_tiers, mode, left):
         self.p1 = p1
         self.p2 = p2
         self.tier = tier
@@ -16,7 +16,6 @@ class PlayerStats(StatsBase):
         self.p2_tiers = p2_tiers
         self.p1_direct = self.p1.get_direct(p2.name)
         self.p2_direct = self.p2.get_direct(p1.name)
-        self.loyalties = loyalties
 
     def print(self):
         logging.info(self.to_text())
@@ -115,10 +114,7 @@ class PlayerStats(StatsBase):
         return self.is_direct() and self.p1_direct.wins != self.p2_direct.wins
 
     def get_column(self):
-        if self.p1.name in self.loyalties and self.p2.name not in self.loyalties or \
-                self.p2.name in self.loyalties and self.p1 not in self.loyalties:
-            return 'Bet !!! LOYALTY !!!'
-        elif self.is_direct_explicitly():
+        if self.is_direct_explicitly():
             return 'Bet  !!! DIRECT !!!'
         else:
             return 'Bet character      '
