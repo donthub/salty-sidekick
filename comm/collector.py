@@ -43,9 +43,9 @@ class Collector:
         self.better.bet(player_stats)
 
     def lock_match(self, p1_streak, p1_amount, p2_streak, p2_amount):
-        logging.info(
+        # logging.info(
             # f'--- P1 streak: {p1_streak}, P1 amount: {p1_amount}, P2 streak: {p2_streak}, P2 amount: {p2_amount}')
-            f'--- P1 amount: {p1_amount}, P2 amount: {p2_amount}')
+            # f'--- P1 amount: {p1_amount}, P2 amount: {p2_amount}')
         if self.state != 'start':
             # logging.info(f'--- Invalid state: {self.state}. Skipping...')
             return

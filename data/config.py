@@ -10,7 +10,6 @@ class Config:
         self.path = path
         self.sample_path = sample_path
 
-        self.stats_amount = 0
         self.stats_games = 0
         self.close_range = 20
         self.simple_ui = False
@@ -18,6 +17,7 @@ class Config:
         self.bet = False
         self.amount = 0
         self.amount_direct = 0
+        self.amount_close = 0
         self.min_balance = 0
         self.init()
 
@@ -35,21 +35,21 @@ class Config:
 
         self.auth = self.get_auth(config)
 
-        if 'stats_amount' in config:
-            self.stats_amount = int(config['stats_amount'])
         if 'stats_games' in config:
             self.stats_games = int(config['stats_games'])
         if 'close_range' in config:
             self.close_range = int(config['close_range'])
+        if 'amount' in config:
+            self.amount = int(config['amount'])
+        if 'amount_direct' in config:
+            self.amount_direct = int(config['amount_direct'])
+        if 'amount_close' in config:
+            self.amount_close = int(config['amount_close'])
 
         self.bet = 'bet' in config and bool(config['bet'])
         if self.bet:
             if 'simple_ui' in config:
                 self.simple_ui = bool(config['simple_ui'])
-            if 'amount' in config:
-                self.amount = int(config['amount'])
-            if 'amount_direct' in config:
-                self.amount_direct = int(config['amount_direct'])
             if 'min_balance' in config:
                 self.min_balance = int(config['min_balance'])
 

@@ -1,6 +1,7 @@
 import logging
 
 from model.stats.statsbase import StatsBase
+from util.util import Util
 
 
 class TotalStats(StatsBase):
@@ -12,8 +13,10 @@ class TotalStats(StatsBase):
         logging.info(self.to_text())
 
     def to_text(self):
-        stats_amount = self.format(self.get_amount(self.total.stats_amount))
-        stats_games = self.format(self.total.stats_games)
+        amount = self.format_very_small2(Util.get_amount(self.total.amount))
+        amount_direct = self.format_very_small(Util.get_amount(self.total.amount_direct))
+        amount_close = self.format_very_small2(Util.get_amount(self.total.amount_close))
+        stats_games = self.format_very_small(self.total.stats_games)
         tier_games = self.format_big(self.get_tier_games())
         tier_directs = self.format_big(self.get_tier_directs())
         tier_characters = self.format_big(self.get_tier_characters())
@@ -40,13 +43,17 @@ class TotalStats(StatsBase):
         total_close_wins = self.format_percent_very_small(self.get_ratio(self.total.close_wins, self.total.close_games))
         total_close_expected_amount = self.format_very_small(self.get_last_amount(self.total.close_expected_amount, self.total.stats_games))
         total_close_upset_amount = self.format_very_small2(self.get_last_amount(self.total.close_upset_amount, self.total.stats_games))
+        total_far_games = self.format_very_small2(self.total.far_games)
+        total_far_wins = self.format_percent_very_small(self.get_ratio(self.total.far_wins, self.total.far_games))
+        total_far_expected_amount = self.format_very_small(self.get_last_amount(self.total.far_expected_amount, self.total.stats_games))
+        total_far_upset_amount = self.format_very_small2(self.get_last_amount(self.total.far_upset_amount, self.total.stats_games))
 
         return f"""
             |---------------------------------------------------------------------------------------|
             | Tier games          | {tier_games} |
             | Tier characters     | {tier_characters} |
             | Tier directs        | {tier_directs} |
-            | Target stats        | {stats_amount} | {stats_games} |
+            | Target stats        | {amount} | {amount_direct} | {amount_close} | {stats_games} |
             | P1 stats            | {total_games} | {total_p1_wins} | {total_p1_amount} |
             | P2 stats            | {total_games} | {total_p2_wins} | {total_p2_amount} |
             | Direct stats        | {total_direct_games} | {total_direct_wins} | {total_direct_amount} |
@@ -54,32 +61,11 @@ class TotalStats(StatsBase):
             | Probability stats   | {total_probability_games} | {total_probability_wins} | {total_probability_amount} |
             | Compare stats       | {total_compare_games} | {total_compare_wins} | {total_compare_expected_amount} | {total_compare_upset_amount} |
             | Close stats         | {total_close_games} | {total_close_wins} | {total_close_expected_amount} | {total_close_upset_amount} |
+            | Far stats           | {total_far_games} | {total_far_wins} | {total_far_expected_amount} | {total_far_upset_amount} |
             |---------------------------------------------------------------------------------------|"""
 
-    def get_amount(self, amount):
-        prefix = self.get_prefix(amount)
-        amount_from = str(abs(round(amount)))
-        amount_to = ''
-
-        index = 0
-        for character in amount_from:
-            amount_to += character
-            if (len(amount_from) - index - 1) % 3 == 0 and index != len(amount_from) - 1:
-                amount_to += ','
-            index += 1
-
-        return prefix + amount_to
-
-    def get_prefix(self, amount):
-        if amount > 0:
-            return '+'
-        elif amount < 0:
-            return '-'
-        else:
-            return ''
-
     def get_last_amount(self, amounts, last):
-        return self.get_amount(sum(amounts[-last:]))
+        return Util.get_amount(sum(amounts[-last:]))
 
     def format_big(self, value):
         return self.format(value=value, width=63)

@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from util.mode import Mode
+from util.util import Util
 
 
 class Better:
@@ -19,6 +20,7 @@ class Better:
         self.simple_ui = config.simple_ui
         self.amount = config.amount
         self.amount_direct = config.amount_direct
+        self.amount_close = config.amount_close
         self.min_balance = config.min_balance
         self.close_range = config.close_range
 
@@ -72,9 +74,9 @@ class Better:
         self.bet_amount(amount)
 
         if self.is_probability_range(player_stats, player_stats.p1):
-            self.bet_player_p1()
+            self.bet_player_p1(player_stats, amount)
         elif self.is_probability_range(player_stats, player_stats.p2):
-            self.bet_player_p2()
+            self.bet_player_p2(player_stats, amount)
 
     def is_probability_range(self, player_stats, player):
         wl_probability = player_stats.get_bet_wl_probability_player(player)
@@ -90,23 +92,35 @@ class Better:
         diff = self.close_range / 200
         return wl_probability > 0.5 + diff or 0.5 > wl_probability >= 0.5 - diff
 
-    def bet_player_p1(self):
-        self.bet_player('player1')
+    def bet_player_p1(self, player_stats, amount):
+        self.bet_player('player1', player_stats, amount)
 
-    def bet_player_p2(self):
-        self.bet_player('player2')
+    def bet_player_p2(self, player_stats, amount):
+        self.bet_player('player2', player_stats, amount)
 
-    def bet_player(self, player_id):
+    def bet_player(self, player_id, player_stats, amount):
+        player = player_stats.p1 if player_id == 'player1' else player_stats.p2
         player_input = self.driver.find_element(value=player_id)
         player_input.click()
+        logging.info(f'Betting: {player.name} ({Util.get_amount(amount)})')
 
     def bet_amount(self, amount):
         wager_input = self.driver.find_element(value='wager')
         wager_input.send_keys(str(amount))
 
     def get_normal_amount(self, player_stats):
-        amount = self.amount_direct if player_stats.is_direct_explicitly() else self.amount
-        return self.get_amount(player_stats, amount)
+        if player_stats.is_direct_explicitly():
+            return self.get_amount(player_stats, self.amount_direct)
+
+        wl_probability = player_stats.get_bet_wl_probability_player(player_stats.p1)
+        if wl_probability is None:
+            return 0
+
+        diff = self.close_range / 200
+        if 0.5 - diff < wl_probability < 0.5 + diff:
+            return self.get_amount(player_stats, self.amount_close)
+        else:
+            return self.get_amount(player_stats, self.amount)
 
     def get_amount(self, player_stats, amount):
         mode = player_stats.mode

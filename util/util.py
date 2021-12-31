@@ -26,3 +26,27 @@ class Util:
         elif p2_skill > p1_skill:
             return p2.name
         return None
+
+    @staticmethod
+    def get_amount(amount):
+        prefix = Util.get_prefix(amount)
+        amount_from = str(abs(round(amount)))
+        amount_to = ''
+
+        index = 0
+        for character in amount_from:
+            amount_to += character
+            if (len(amount_from) - index - 1) % 3 == 0 and index != len(amount_from) - 1:
+                amount_to += ','
+            index += 1
+
+        return prefix + amount_to
+
+    @staticmethod
+    def get_prefix(amount):
+        if amount > 0:
+            return '+'
+        elif amount < 0:
+            return '-'
+        else:
+            return ''

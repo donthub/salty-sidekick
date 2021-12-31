@@ -1,12 +1,12 @@
 {
   "username": "",
   "oauth_token": "",
-  "stats_amount": 100000,
   "stats_games": 10000,
   "bet": true,
   "simple_ui": false,
   "amount": 1000,
-  "amount_direct": 10000,
+  "amount_direct": 5000,
+  "amount_close": 500,
   "min_balance": 0,
   "close_range": 10
 }
