@@ -108,7 +108,7 @@ class Collector:
         elif probability_text is None:
             text += f'{odds_text:.2f}'
         else:
-            text += f'{probability_text} - {odds_text:.2f}'
+            text += f'{probability_text} | {odds_text:.2f}'
         return f'Winner: {winner} ({text})'
 
     def get_probability_text(self, winner):

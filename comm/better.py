@@ -102,7 +102,7 @@ class Better:
         player = player_stats.p1 if player_id == 'player1' else player_stats.p2
         player_input = self.driver.find_element(value=player_id)
         player_input.click()
-        logging.info(f'Betting: {player.name} ({Util.get_amount(amount)})')
+        logging.info(f'Betting: {player.name} ({Util.get_amount(amount)} | {Util.get_amount(self.get_balance())})')
 
     def bet_amount(self, amount):
         wager_input = self.driver.find_element(value='wager')
