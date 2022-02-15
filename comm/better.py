@@ -80,8 +80,8 @@ class Better:
 
     def is_probability_range(self, player_stats, player):
         skill_probability = player_stats.get_bet_probability_player(player)
-        if player_stats.mode == Mode.TOURNAMENT and skill_probability is not None and skill_probability >= 0.5:
-            return True
+        if player_stats.mode == Mode.TOURNAMENT:
+            return skill_probability is not None and skill_probability >= 0.5
 
         wl_probability = player_stats.get_bet_wl_probability_player(player)
         if wl_probability is None or skill_probability is None:
