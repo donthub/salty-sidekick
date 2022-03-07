@@ -1,10 +1,10 @@
 # Description
 
-Collects and displays SaltyBet match information, with optional automatic betting.
+Collects and displays SB match information, with optional automatic betting.
 
 # Disclaimer
 
-Using this application - automatic betting specially - may be against SaltyBet's Terms of Service. Use at your own risk.
+Using this application - automatic betting specially - may be against SB's Terms of Service. Use at your own risk.
 
 # Pre-requisites
 
