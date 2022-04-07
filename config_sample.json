@@ -3,10 +3,13 @@
   "oauth_token": "",
   "stats_games": 10000,
   "bet": true,
+  "bet_tournament": true,
   "simple_ui": false,
   "amount": 1000,
   "amount_direct": 5000,
   "amount_close": 500,
   "min_balance": 0,
-  "close_range": 10
+  "max_balance": 0,
+  "close_range": 10,
+  "least_matches": 30
 }

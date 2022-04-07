@@ -15,10 +15,14 @@ class Config:
         self.simple_ui = False
         self.auth = None
         self.bet = False
+        self.bet_close = True
+        self.bet_tournament = True
         self.amount = 0
         self.amount_direct = 0
         self.amount_close = 0
         self.min_balance = 0
+        self.max_balance = 0
+        self.least_matches = 0
         self.init()
 
     def init(self):
@@ -48,10 +52,16 @@ class Config:
 
         self.bet = 'bet' in config and bool(config['bet'])
         if self.bet:
+            if 'bet_tournament' in config:
+                self.bet_tournament = bool(config['bet_tournament'])
             if 'simple_ui' in config:
                 self.simple_ui = bool(config['simple_ui'])
             if 'min_balance' in config:
                 self.min_balance = int(config['min_balance'])
+            if 'max_balance' in config:
+                self.max_balance = int(config['max_balance'])
+            if 'least_matches' in config:
+                self.least_matches = int(config['least_matches'])
 
     def get_auth(self, config):
         username = self.strip(config['username'])

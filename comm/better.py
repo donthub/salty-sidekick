@@ -17,12 +17,15 @@ class Better:
 
     def __init__(self, config):
         self.is_active = config.bet
+        self.bet_tournament = config.bet_tournament
         self.simple_ui = config.simple_ui
         self.amount = config.amount
         self.amount_direct = config.amount_direct
         self.amount_close = config.amount_close
         self.min_balance = config.min_balance
+        self.max_balance = config.max_balance
         self.close_range = config.close_range
+        self.least_matches = config.least_matches
 
         self.driver = None
         self.init()
@@ -62,7 +65,20 @@ class Better:
             logging.warning('Error occurred while trying to bet!')
 
     def try_bet(self, player_stats):
-        if not self.is_active or player_stats.mode == Mode.EXHIBITION:
+        if not self.is_active:
+            logging.info('Betting is disabled.')
+            return
+
+        if player_stats.mode == Mode.EXHIBITION:
+            logging.info('Exhibition betting is disabled.')
+            return
+
+        if not self.bet_tournament and player_stats.mode == Mode.TOURNAMENT:
+            logging.info('Tournament betting is disabled.')
+            return
+
+        if not self.has_least_matches(player_stats):
+            logging.info('Least matches criteria not met.')
             return
 
         amount = self.get_normal_amount(player_stats)
@@ -77,6 +93,11 @@ class Better:
             self.bet_player_p1(player_stats, amount)
         elif self.is_probability_range(player_stats, player_stats.p2):
             self.bet_player_p2(player_stats, amount)
+
+    def has_least_matches(self, player_stats):
+        if player_stats.is_direct_explicitly():
+            return player_stats.p1_direct.total >= self.least_matches
+        return player_stats.p1.total_games >= self.least_matches and player_stats.p2.total_games >= self.least_matches
 
     def is_probability_range(self, player_stats, player):
         skill_probability = player_stats.get_bet_probability_player(player)
@@ -117,12 +138,16 @@ class Better:
 
         wl_probability = player_stats.get_bet_wl_probability_player(player_stats.p1)
         if wl_probability is None:
+            logging.info('Probability is undecided.')
             return 0
 
         diff = self.close_range / 200
-        if 0.5 - diff < wl_probability < 0.5 + diff:
+        is_close_probability = 0.5 - diff <= wl_probability <= 0.5 + diff
+        if is_close_probability:
+            logging.info('Close probability.')
             return self.get_amount(player_stats, self.amount_close)
         else:
+            logging.info('Far probability.')
             return self.get_amount(player_stats, self.amount)
 
     def get_amount(self, player_stats, amount):
@@ -130,6 +155,14 @@ class Better:
         if mode == Mode.MATCHMAKING or mode == Mode.TOURNAMENT:
             balance = self.get_balance()
             if mode == Mode.MATCHMAKING:
+                if 0 < self.max_balance <= balance:
+                    logging.info('Max balance reached.')
+                    return 0
+                max_amount = balance - self.min_balance
+                if max_amount < 0:
+                    logging.info('Min balance reached.')
+                    return 0
+                amount = min(amount, max_amount)
                 return min(balance, amount)
             if mode == Mode.TOURNAMENT:
                 return balance
