@@ -34,6 +34,7 @@ For automatic betting to be enabled, the following is required:
 
 * `bet`: `true` to enable automatic betting, `false` otherwise.
 * `bet_tournament`: `true` to enable betting on tournaments, `false` otherwise.
+* `bet_ignore`: List of characters to ignore in normal betting.
 * `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
 * `amount`: Betting amount for matchmaking if winrate probability of characters are out of range.
 * `amount_direct`: Betting amount for matchmaking between characters with direct match history.

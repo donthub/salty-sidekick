@@ -17,6 +17,7 @@ class Config:
         self.bet = False
         self.bet_close = True
         self.bet_tournament = True
+        self.bet_ignore = []
         self.amount = 0
         self.amount_direct = 0
         self.amount_close = 0
@@ -54,6 +55,8 @@ class Config:
         if self.bet:
             if 'bet_tournament' in config:
                 self.bet_tournament = bool(config['bet_tournament'])
+            if 'bet_ignore' in config:
+                self.bet_ignore = config['bet_ignore']
             if 'simple_ui' in config:
                 self.simple_ui = bool(config['simple_ui'])
             if 'min_balance' in config:

@@ -4,6 +4,7 @@
   "stats_games": 10000,
   "bet": true,
   "bet_tournament": true,
+  "bet_ignore": [],
   "simple_ui": false,
   "amount": 1000,
   "amount_direct": 5000,

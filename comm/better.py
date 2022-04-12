@@ -16,8 +16,9 @@ from util.util import Util
 class Better:
 
     def __init__(self, config):
-        self.is_active = config.bet
+        self.is_bet = config.bet
         self.bet_tournament = config.bet_tournament
+        self.bet_ignore = config.bet_ignore
         self.simple_ui = config.simple_ui
         self.amount = config.amount
         self.amount_direct = config.amount_direct
@@ -31,7 +32,7 @@ class Better:
         self.init()
 
     def init(self):
-        if not self.is_active:
+        if not self.is_bet:
             return
         self.init_driver()
         self.log_in()
@@ -65,7 +66,7 @@ class Better:
             logging.warning('Error occurred while trying to bet!')
 
     def try_bet(self, player_stats):
-        if not self.is_active:
+        if not self.is_bet:
             logging.info('Betting is disabled.')
             return
 
@@ -75,6 +76,10 @@ class Better:
 
         if not self.bet_tournament and player_stats.mode == Mode.TOURNAMENT:
             logging.info('Tournament betting is disabled.')
+            return
+
+        if self.is_ignored(player_stats):
+            logging.info('Character is ignored.')
             return
 
         if not self.has_least_matches(player_stats):
@@ -93,6 +98,10 @@ class Better:
             self.bet_player_p1(player_stats, amount)
         elif self.is_probability_range(player_stats, player_stats.p2):
             self.bet_player_p2(player_stats, amount)
+
+    def is_ignored(self, player_stats):
+        in_ignore = player_stats.p1.name in self.bet_ignore or player_stats.p2.name in self.bet_ignore
+        return in_ignore and player_stats.mode != Mode.TOURNAMENT
 
     def has_least_matches(self, player_stats):
         if player_stats.is_direct_explicitly():
