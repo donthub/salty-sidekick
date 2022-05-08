@@ -113,17 +113,15 @@ class Better:
         if player_stats.mode == Mode.TOURNAMENT:
             return skill_probability is not None and skill_probability >= 0.5
 
-        wl_probability = player_stats.get_bet_wl_probability_player(player)
-        if wl_probability is None or skill_probability is None:
+        p1_wl_ratio = player_stats.get_wl_ratio_player(player_stats.p1)
+        p2_wl_ratio = player_stats.get_wl_ratio_player(player_stats.p2)
+        if p1_wl_ratio is None or p2_wl_ratio is None:
             return False
-        if skill_probability > 0.5 > wl_probability:
-            return True
-        if skill_probability < 0.5 < wl_probability:
-            return False
-        if wl_probability == 0.5:
-            return skill_probability > 0.5
-        diff = self.close_range / 200
-        return wl_probability > 0.5 + diff or 0.5 > wl_probability >= 0.5 - diff
+
+        if player == player_stats.p1:
+            return p1_wl_ratio > p2_wl_ratio
+        else:
+            return p1_wl_ratio < p2_wl_ratio
 
     def bet_player_p1(self, player_stats, amount):
         self.bet_player('player1', player_stats, amount)
@@ -145,19 +143,20 @@ class Better:
         if player_stats.is_direct_explicitly():
             return self.get_amount(player_stats, self.amount_direct)
 
-        wl_probability = player_stats.get_bet_wl_probability_player(player_stats.p1)
-        if wl_probability is None:
+        p1_wl_ratio = player_stats.get_wl_ratio_player(player_stats.p1)
+        p2_wl_ratio = player_stats.get_wl_ratio_player(player_stats.p2)
+        if p1_wl_ratio is None or p2_wl_ratio is None:
             logging.info('Probability is undecided.')
             return 0
 
         diff = self.close_range / 200
-        is_close_probability = 0.5 - diff <= wl_probability <= 0.5 + diff
-        if is_close_probability:
-            logging.info('Close probability.')
-            return self.get_amount(player_stats, self.amount_close)
-        else:
+        if p1_wl_ratio >= 0.5 + diff and p2_wl_ratio <= 0.5 - diff or \
+                p2_wl_ratio >= 0.5 + diff and p1_wl_ratio <= 0.5 - diff:
             logging.info('Far probability.')
             return self.get_amount(player_stats, self.amount)
+        else:
+            logging.info('Close probability.')
+            return self.get_amount(player_stats, self.amount_close)
 
     def get_amount(self, player_stats, amount):
         mode = player_stats.mode

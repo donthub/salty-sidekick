@@ -243,6 +243,12 @@ class PlayerStats(StatsBase):
         else:
             return self.get_wl_probability(self.p2, self.p1)
 
+    def get_wl_ratio_player(self, player):
+        if player.name == self.p1.name:
+            return self.get_ratio(self.p1.total_wins, self.p1.total_games)
+        else:
+            return self.get_ratio(self.p2.total_wins, self.p2.total_games)
+
     def get_bet_probability_player(self, player):
         if self.is_direct_explicitly():
             return self.get_direct_wl_probability_player(player)

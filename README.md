@@ -36,12 +36,12 @@ For automatic betting to be enabled, the following is required:
 * `bet_tournament`: `true` to enable betting on tournaments, `false` otherwise.
 * `bet_ignore`: List of characters to ignore in normal betting.
 * `simple_ui`: `true` to display Twitch stream and chat, `false` otherwise.
-* `amount`: Betting amount for matchmaking if winrate probability of characters are out of range.
+* `amount`: Betting amount for matchmaking if winlose ratio of characters are out of range.
 * `amount_direct`: Betting amount for matchmaking between characters with direct match history.
-* `amount_close`: Betting amount for matchmaking if winrate probability of characters are within range.
+* `amount_close`: Betting amount for matchmaking if winlose ratio of characters are within range.
 * `min_balance`: Betting will not lower balance below this value.
 * `max_balance`: If current balance is above this amount, betting will not occur.
-* `close_range`: Bet upset if winrate probability of the characters are within this range (percent).
+* `close_range`: Bet upset if winlose ratio of the characters are within this range (percent).
 * `least_matches`: If the total matches of either characters are not greater than or equals this value, betting will not occur.
 
 Tournaments are all in, exhibitions are ignored.
