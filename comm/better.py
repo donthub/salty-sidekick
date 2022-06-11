@@ -66,6 +66,8 @@ class Better:
             logging.warning('Error occurred while trying to bet!')
 
     def try_bet(self, player_stats):
+        logging.info(f'Current balance: {self.get_balance()}')
+
         if not self.is_bet:
             logging.info('Betting is disabled.')
             return
