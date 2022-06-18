@@ -76,7 +76,8 @@ class Better:
             logging.info('Exhibition betting is disabled.')
             return
 
-        if not self.bet_tournament and player_stats.mode == Mode.TOURNAMENT:
+        if not self.bet_tournament and (player_stats.mode == Mode.TOURNAMENT or
+                                        player_stats.mode == Mode.MATCHMAKING and player_stats.left <= 1):
             logging.info('Tournament betting is disabled.')
             return
 
