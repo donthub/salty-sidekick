@@ -107,27 +107,24 @@ class Better:
             return
 
         streak_balance = balance - self.min_balance_streak
+        amount = self.get_normal_amount(player_stats)
 
         if streak < 0:
             if streak_balance <= 0:
-                self.bet_amount(player_stats, amount=1, probable=True)
+                self.bet_amount_player(player_stats=player_stats, amount=1, probable=True)
             else:
-                self.bet_amount(player_stats, amount=streak_balance, probable=False)
+                self.bet_amount_player(player_stats=player_stats, amount=streak_balance, probable=False)
         elif streak > 0:
             if streak_balance != streak:
-                self.bet_amount(player_stats, amount=streak_balance, probable=False)
-            else:
-                self.bet_amount(amount=1, probable=True)
-
-    def get_streak(self):
-        streak_text = self.driver.find_element(value='betStreak').text
-        return int(streak_text) if streak_text else 0
+                self.bet_amount_player(player_stats=player_stats, amount=streak_balance, probable=False)
+            elif amount > 0:
+                self.bet_amount_player(player_stats=player_stats, amount=1, probable=True)
 
     def bet_normal_mode(self, player_stats):
         amount = self.get_normal_amount(player_stats)
-        self.bet_amount(player_stats, amount, probable=True)
+        self.bet_amount_player(player_stats=player_stats, amount=amount, probable=True)
 
-    def bet_amount(self, player_stats, amount: int, probable: bool):
+    def bet_amount_player(self, player_stats, amount: int, probable: bool):
         if amount <= 0:
             return
 
@@ -227,3 +224,7 @@ class Better:
         balance_text = self.driver.find_element(value='balance').text
         balance_text = balance_text.replace(',', '')
         return int(balance_text) if balance_text else 0
+
+    def get_streak(self):
+        streak_text = self.driver.find_element(value='betStreak').text
+        return int(streak_text) if streak_text else 0
