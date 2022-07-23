@@ -3,6 +3,7 @@
   "oauth_token": "",
   "stats_games": 10000,
   "bet": true,
+  "bet_streak": false,
   "bet_tournament": true,
   "bet_ignore": [],
   "simple_ui": false,
@@ -12,5 +13,7 @@
   "min_balance": 0,
   "max_balance": 0,
   "close_range": 10,
-  "least_matches": 30
+  "least_matches": 30,
+  "min_balance_streak": 999999999999,
+  "max_streak": 999
 }

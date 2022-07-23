@@ -18,12 +18,15 @@ class Better:
     def __init__(self, config):
         self.is_bet = config.bet
         self.bet_tournament = config.bet_tournament
+        self.bet_streak = config.bet_streak
         self.bet_ignore = config.bet_ignore
         self.simple_ui = config.simple_ui
         self.amount = config.amount
         self.amount_direct = config.amount_direct
         self.amount_close = config.amount_close
         self.min_balance = config.min_balance
+        self.min_balance_streak = config.min_balance_streak
+        self.max_streak = config.max_streak
         self.max_balance = config.max_balance
         self.close_range = config.close_range
         self.least_matches = config.least_matches
@@ -89,7 +92,42 @@ class Better:
             logging.info('Least matches criteria not met.')
             return
 
+        if self.bet_streak:
+            self.bet_streak_mode(player_stats)
+        else:
+            self.bet_normal_mode(player_stats)
+
+    def bet_streak_mode(self, player_stats):
+        streak = self.get_streak()
+        if self.max_streak > 0 and streak >= self.max_streak:
+            return
+
+        balance = self.get_balance()
+        if balance == 0:
+            return
+
+        streak_balance = balance - self.min_balance_streak
+
+        if streak < 0:
+            if streak_balance <= 0:
+                self.bet_amount(player_stats, amount=1, probable=True)
+            else:
+                self.bet_amount(player_stats, amount=streak_balance, probable=False)
+        elif streak > 0:
+            if streak_balance != streak:
+                self.bet_amount(player_stats, amount=streak_balance, probable=False)
+            else:
+                self.bet_amount(amount=1, probable=True)
+
+    def get_streak(self):
+        streak_text = self.driver.find_element(value='betStreak').text
+        return int(streak_text) if streak_text else 0
+
+    def bet_normal_mode(self, player_stats):
         amount = self.get_normal_amount(player_stats)
+        self.bet_amount(player_stats, amount, probable=True)
+
+    def bet_amount(self, player_stats, amount: int, probable: bool):
         if amount <= 0:
             return
 
@@ -98,9 +136,15 @@ class Better:
         self.bet_amount(amount)
 
         if self.is_probability_range(player_stats, player_stats.p1):
-            self.bet_player_p1(player_stats, amount)
+            if probable:
+                self.bet_player_p1(player_stats, amount)
+            else:
+                self.bet_player_p2(player_stats, amount)
         elif self.is_probability_range(player_stats, player_stats.p2):
-            self.bet_player_p2(player_stats, amount)
+            if probable:
+                self.bet_player_p2(player_stats, amount)
+            else:
+                self.bet_player_p1(player_stats, amount)
 
     def is_ignored(self, player_stats):
         in_ignore = player_stats.p1.name in self.bet_ignore or player_stats.p2.name in self.bet_ignore

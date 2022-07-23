@@ -16,6 +16,7 @@ class Config:
         self.auth = None
         self.bet = False
         self.bet_close = True
+        self.bet_streak = False
         self.bet_tournament = True
         self.bet_ignore = []
         self.amount = 0
@@ -24,6 +25,8 @@ class Config:
         self.min_balance = 0
         self.max_balance = 0
         self.least_matches = 0
+        self.min_balance_streak = 999999999999
+        self.max_streak = 999
         self.init()
 
     def init(self):
@@ -55,12 +58,18 @@ class Config:
         if self.bet:
             if 'bet_tournament' in config:
                 self.bet_tournament = bool(config['bet_tournament'])
+            if 'bet_streak' in config:
+                self.bet_streak = bool(config['bet_streak'])
             if 'bet_ignore' in config:
                 self.bet_ignore = config['bet_ignore']
             if 'simple_ui' in config:
                 self.simple_ui = bool(config['simple_ui'])
             if 'min_balance' in config:
                 self.min_balance = int(config['min_balance'])
+            if 'min_balance_streak' in config:
+                self.min_balance_streak = int(config['min_balance_streak'])
+            if 'max_streak' in config:
+                self.max_streak = int(config['max_streak'])
             if 'max_balance' in config:
                 self.max_balance = int(config['max_balance'])
             if 'least_matches' in config:
