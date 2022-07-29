@@ -115,7 +115,9 @@ class Better:
             else:
                 self.bet_amount_player(player_stats=player_stats, amount=streak_balance, probable=False)
         elif streak > 0:
-            if streak_balance != streak:
+            if streak_balance <= 0:
+                self.bet_amount_player(player_stats=player_stats, amount=1, probable=True)
+            elif streak_balance != streak:
                 self.bet_amount_player(player_stats=player_stats, amount=streak_balance, probable=False)
             elif amount > 0:
                 self.bet_amount_player(player_stats=player_stats, amount=1, probable=True)
